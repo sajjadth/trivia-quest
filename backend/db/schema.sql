@@ -3,7 +3,7 @@ CREATE TABLE users (
     username VARCHAR(32) UNIQUE NOT NULL,
     password varchar(128) NOT NULL,
     email VARCHAR(256) UNIQUE NOT NULL,
-    created_at DATETIME NOT NULL
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE users AUTO_INCREMENT = 100000;
