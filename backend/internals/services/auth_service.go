@@ -33,19 +33,22 @@ func RegisterUser(user *models.User) error {
 	// insert user in to database and send error if user already exist
 	_, err := db.Exec("INSERT INTO users (username, email, password) VALUES(?, ?, ?);", user.Username, user.Email, user.Password)
 	if err != nil {
-		return err
+		log.Println(err)
+		return fmt.Errorf("something went wrong please try again later")
 	}
 
 	// get userID from database
 	err = db.QueryRow("SELECT id FROM users WHERE username = ?;", user.Username).Scan(&user.ID)
 	if err != nil {
-		return err
+		log.Println(err)
+		return fmt.Errorf("something went wrong please try again later")
 	}
 
 	// create row for user in scores table
 	_, err = db.Exec("INSERT INTO scores (user_id, score) VALUES(?, ?);", user.ID, 0)
 	if err != nil {
-		return err
+		log.Println(err)
+		return fmt.Errorf("something went wrong please try again later")
 	}
 
 	// creating verification code for verifying email
@@ -54,12 +57,14 @@ func RegisterUser(user *models.User) error {
 	// sending confirmation code
 	_, err = SendConfirmationEmail(user.Email, verificationCode)
 	if err != nil {
-		return err
+		log.Println(err)
+		return fmt.Errorf("something went wrong please try again later")
 	}
 	//creating row for user in verification_attempts table
 	_, err = db.Exec("INSERT INTO verification_attempts (user_id, verification_code) VALUES(?, ?);", user.ID, verificationCode)
 	if err != nil {
-		return err
+		log.Println(err)
+		return fmt.Errorf("something went wrong please try again later")
 	}
 
 	return nil
@@ -113,7 +118,8 @@ func SendConfirmationEmail(email, verificationCode string) (bool, error) {
 
 	// handle error in sending confirmation email
 	if err != nil {
-		return false, fmt.Errorf("failed to send confirmation email Error: %v", err)
+		log.Println(err)
+		return false, fmt.Errorf("something went wrong please try again later")
 	}
 
 	// getting result of sendig confirmation email
@@ -122,7 +128,8 @@ func SendConfirmationEmail(email, verificationCode string) (bool, error) {
 	// handle error in sendgin cofirmation email
 	if result["success"] != true {
 		errorMessage := result["error"].(string)
-		return false, errors.New(errorMessage)
+		log.Println(errorMessage)
+		return false, fmt.Errorf("something went wrong please try again later")
 	}
 
 	return true, nil
@@ -147,7 +154,8 @@ func EmailVerification(email string, code int) error {
 		email,
 	).Scan(&userID, &verification_code, &verified, &createdAt)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		log.Println(err)
+		return fmt.Errorf("something went wrong please try again later")
 	}
 
 	// parse time to solve type error
@@ -155,7 +163,7 @@ func EmailVerification(email string, code int) error {
 
 	// check if user already verified
 	if verified {
-		return fmt.Errorf("%v", "user already verified")
+		return fmt.Errorf("user already verified")
 	}
 
 	//send new confirmation code if code expired
@@ -163,7 +171,8 @@ func EmailVerification(email string, code int) error {
 		verificationCode := getVerificationCode()
 		_, err := SendConfirmationEmail(email, verificationCode)
 		if err != nil {
-			return fmt.Errorf("%v", err)
+			log.Println(err)
+			return fmt.Errorf("something went wrong please try again later")
 		}
 		db.Exec(
 			"UPDATE verification_attempts SET verification_code = ?, created_at = ? WHERE user_id = ?;",
@@ -171,7 +180,7 @@ func EmailVerification(email string, code int) error {
 			time.Now(),
 			userID,
 		)
-		return fmt.Errorf("%v", "the verification code has expired")
+		return fmt.Errorf("the verification code has expired")
 	}
 
 	// check if user input and varification code is same
