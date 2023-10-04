@@ -4,15 +4,24 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/sajjadth/trivia-quest/config"
 	"github.com/sajjadth/trivia-quest/internals/auth"
 	"github.com/sajjadth/trivia-quest/internals/models"
 	"github.com/sajjadth/trivia-quest/internals/tokens"
 )
+
+func getVerificationCode() string {
+	code := rand.Intn(999999)
+
+	// Format the verification code as a six-digit string
+	return fmt.Sprintf("%06d", code)
+}
 
 func RegisterUser(user *models.User) error {
 	// hashing password
@@ -40,7 +49,7 @@ func RegisterUser(user *models.User) error {
 	}
 
 	// creating verification code for verifying email
-	verificationCode := rand.Intn(999999)
+	verificationCode := getVerificationCode()
 
 	// sending confirmation code
 	_, err = SendConfirmationEmail(user.Email, verificationCode)
@@ -56,31 +65,35 @@ func RegisterUser(user *models.User) error {
 	return nil
 }
 
-func LoginUser(email, password string) (string, error) {
+func LoginUser(email, password string) (string, bool, error) {
 	// initializing user for access user info
 	user := &models.User{}
+	var needConfirmation bool
 
 	// get database
 	db := config.GetDB()
 
 	// check if user exist in database
-	err := db.QueryRow("SELECT username, password FROM users WHERE email = ?;", email).Scan(&user.Username, &user.Password)
+	err := db.QueryRow(
+		"SELECT users.username, users.password, verification_attempts.verified FROM users, verification_attempts WHERE users.email = ?;",
+		email,
+	).Scan(&user.Username, &user.Password, &needConfirmation)
 	if err != nil {
-		return "", errors.New("invalid email or password")
+		return "", false, errors.New("invalid email or password")
 	}
 
 	// compare user entered password with hashed password in database
 	if !auth.VerifyPassword(password, user.Password) {
-		return "", errors.New("invalid email or password")
+		return "", false, errors.New("invalid email or password")
 	}
 
 	//creating token
 	token := tokens.Create(user.Username)
 
-	return token, nil
+	return token, !needConfirmation, nil
 }
 
-func SendConfirmationEmail(email string, verificationCode int) (bool, error) {
+func SendConfirmationEmail(email, verificationCode string) (bool, error) {
 	var result map[string]interface{}
 
 	// get api key and sender from .env
@@ -113,4 +126,65 @@ func SendConfirmationEmail(email string, verificationCode int) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func EmailVerification(email string, code int) error {
+	// initial necessary variables
+	var verification_code int
+	var createdAt []uint8
+	var verified bool
+	var userID int
+
+	// get database
+	db := config.GetDB()
+
+	// get confirmation info
+	err := db.QueryRow(
+		`SELECT u.id, va.verification_code, va.verified, va.created_at
+ 		 FROM verification_attempts va
+ 		 JOIN users u ON va.user_id = u.id
+ 		 WHERE u.email = ?;`,
+		email,
+	).Scan(&userID, &verification_code, &verified, &createdAt)
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+
+	// parse time to solve type error
+	parsedTime, _ := time.Parse("2006-01-02 15:04:05", string(createdAt))
+
+	// check if user already verified
+	if verified {
+		return fmt.Errorf("%v", "user already verified")
+	}
+
+	//send new confirmation code if code expired
+	if parsedTime.Add(time.Minute*5).Compare(time.Now()) != 1 {
+		verificationCode := getVerificationCode()
+		_, err := SendConfirmationEmail(email, verificationCode)
+		if err != nil {
+			return fmt.Errorf("%v", err)
+		}
+		db.Exec(
+			"UPDATE verification_attempts SET verification_code = ?, created_at = ? WHERE user_id = ?;",
+			verificationCode,
+			time.Now(),
+			userID,
+		)
+		return fmt.Errorf("%v", "the verification code has expired")
+	}
+
+	// check if user input and varification code is same
+	if code != verification_code {
+		return fmt.Errorf("incorrect Verification Code")
+	}
+
+	// update the verification status of user in database
+	_, err = db.Exec("UPDATE verification_attempts SET verified = TRUE WHERE user_id = ?;", userID)
+	if err != nil {
+		log.Println(err)
+		return fmt.Errorf("something went wrong please try again later")
+	}
+
+	return nil
 }
