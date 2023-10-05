@@ -31,7 +31,12 @@ func RegisterUser(user *models.User) error {
 	db := config.GetDB()
 
 	// insert user in to database and send error if user already exist
-	_, err := db.Exec("INSERT INTO users (username, email, password) VALUES(?, ?, ?);", user.Username, user.Email, user.Password)
+	_, err := db.Exec(
+		`INSERT INTO users (username, email, password, created_at) VALUES(?, ?, ?, NOW());`,
+		user.Username,
+		user.Email,
+		user.Password,
+	)
 	if err != nil {
 		log.Println(err)
 		return fmt.Errorf("something went wrong please try again later")
@@ -61,7 +66,11 @@ func RegisterUser(user *models.User) error {
 		return fmt.Errorf("something went wrong please try again later")
 	}
 	//creating row for user in verification_attempts table
-	_, err = db.Exec("INSERT INTO verification_attempts (user_id, verification_code) VALUES(?, ?);", user.ID, verificationCode)
+	_, err = db.Exec(
+		"INSERT INTO verification_attempts (user_id, verification_code, created_at) VALUES(?, ?, NOW());",
+		user.ID,
+		verificationCode,
+	)
 	if err != nil {
 		log.Println(err)
 		return fmt.Errorf("something went wrong please try again later")
@@ -135,9 +144,9 @@ func SendConfirmationEmail(email, verificationCode string) (bool, error) {
 	return true, nil
 }
 
-func EmailVerification(email string, code int) error {
+func EmailVerification(email string, code string) error {
 	// initial necessary variables
-	var verification_code int
+	var verification_code string
 	var createdAt []uint8
 	var verified bool
 	var userID int
@@ -167,7 +176,9 @@ func EmailVerification(email string, code int) error {
 	}
 
 	//send new confirmation code if code expired
-	if parsedTime.Add(time.Minute*5).Compare(time.Now()) != 1 {
+	now, _ := time.Parse("2006-01-02 15:04:05", time.Now().Format("2006-01-02 15:04:05"))
+
+	if now.After(parsedTime.Add(time.Minute * 5)) {
 		verificationCode := getVerificationCode()
 		_, err := SendConfirmationEmail(email, verificationCode)
 		if err != nil {
@@ -175,9 +186,8 @@ func EmailVerification(email string, code int) error {
 			return fmt.Errorf("something went wrong please try again later")
 		}
 		db.Exec(
-			"UPDATE verification_attempts SET verification_code = ?, created_at = ? WHERE user_id = ?;",
+			"UPDATE verification_attempts SET verification_code = ?, created_at = NOW() WHERE user_id = ?;",
 			verificationCode,
-			time.Now(),
 			userID,
 		)
 		return fmt.Errorf("the verification code has expired")

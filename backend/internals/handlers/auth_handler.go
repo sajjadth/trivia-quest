@@ -57,7 +57,7 @@ func Login(c *gin.Context) {
 
 	// send confirmation code if user is not verified
 	if needConfimation {
-		services.EmailVerification(user.Email, -1)
+		services.EmailVerification(user.Email, "")
 		c.JSON(
 			http.StatusOK,
 			gin.H{
@@ -90,12 +90,12 @@ func SendConfirmationEmail(c *gin.Context) {
 	}
 
 	// send new verification code to user
-	if err := services.EmailVerification(user.Email, -1); err != nil {
+	if err := services.EmailVerification(user.Email, ""); err != nil {
 		log.Println(err)
 		c.JSON(
 			http.StatusInternalServerError,
 			gin.H{
-				"error":   "something went wrong please try again later",
+				"error":   err.Error(),
 				"success": false,
 			})
 		return
@@ -112,7 +112,6 @@ func SendConfirmationEmail(c *gin.Context) {
 
 func VerifyEmail(c *gin.Context) {
 	var user models.User
-	var verificationCode int
 
 	// bind JSON data from the request to the user variable
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -120,14 +119,8 @@ func VerifyEmail(c *gin.Context) {
 		return
 	}
 
-	// Bind verification_code from the request
-	if err := c.ShouldBindJSON(&gin.H{"verification_code": &verificationCode}); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "success": false})
-		return
-	}
-
 	// check user verification code
-	if err := services.EmailVerification(user.Email, verificationCode); err != nil {
+	if err := services.EmailVerification(user.Email, user.VerificationCode); err != nil {
 		log.Println(err)
 		c.JSON(
 			http.StatusInternalServerError,
