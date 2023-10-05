@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/sajjadth/trivia-quest/config"
+	"github.com/sajjadth/trivia-quest/internals/routes"
 )
 
 func main() {
@@ -15,6 +16,8 @@ func main() {
 	appPort := fmt.Sprintf(":%v", os.Getenv("APP_PORT"))
 
 	// run app
-	router := config.GetRouter()
-	router.Run(appPort)
+	app := config.GetRouter()
+	router := app.Group("/api/v1")
+	routes.SetupAuthRoutes(router)
+	app.Run(appPort)
 }
