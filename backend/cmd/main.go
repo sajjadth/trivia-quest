@@ -19,5 +19,6 @@ func main() {
 	app := config.GetRouter()
 	router := app.Group("/api/v1")
 	routes.SetupAuthRoutes(router)
+	routes.SetupQuestionRoutes(router)
 	app.Run(appPort)
 }
