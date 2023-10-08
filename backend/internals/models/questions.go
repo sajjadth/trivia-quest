@@ -15,10 +15,12 @@ type Question struct {
 }
 
 type QuestionRequest struct {
-	Amount       int    `json:"amount"`
-	Category     int    `json:"category"`
-	Difficulty   string `json:"difficulty"`
-	QuestionType string `json:"question_type"`
+	Amount        int    `json:"amount"`
+	Category      int    `json:"category"`
+	Difficulty    string `json:"difficulty"`
+	QuestionType  string `json:"question_type"`
+	UserAnswer    string `json:"user_answer"`
+	CorrectAnswer string `json:"correct_answer"`
 }
 
 type SerializedQuestionResponse struct {
