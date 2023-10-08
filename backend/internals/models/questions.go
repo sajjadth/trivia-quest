@@ -1,11 +1,11 @@
 package models
 
-type Questions struct {
+type QuestionList struct {
 	ResponseCode int         `json:"response_code"`
-	Questions    []*question `json:"results"`
+	Questions    []*Question `json:"results"`
 }
 
-type question struct {
+type Question struct {
 	Category         string   `json:"category"`
 	CorrectAnswer    string   `json:"correct_answer"`
 	Difficulty       string   `json:"difficulty"`
@@ -19,4 +19,24 @@ type QuestionRequest struct {
 	Category     int    `json:"category"`
 	Difficulty   string `json:"difficulty"`
 	QuestionType string `json:"question_type"`
+}
+
+type SerializedQuestionResponse struct {
+	Category      string   `json:"category"`
+	CorrectAnswer string   `json:"correct_answer"`
+	Difficulty    string   `json:"difficulty"`
+	Options       []string `json:"options"`
+	Question      string   `json:"question"`
+	Type          string   `json:"type"`
+}
+
+func (q *Question) ToSerializedQuestion() *SerializedQuestionResponse {
+	return &SerializedQuestionResponse{
+		Category:      q.Category,
+		CorrectAnswer: q.CorrectAnswer,
+		Difficulty:    q.Difficulty,
+		Options:       q.IncorrectAnswers,
+		Question:      q.Question,
+		Type:          q.Type,
+	}
 }
