@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 
+	"github.com/sajjadth/trivia-quest/config"
 	"github.com/sajjadth/trivia-quest/internals/models"
 )
 
@@ -89,4 +90,37 @@ func GetQuestions(amount, category int, difficulty, questinoType string) ([]mode
 	}
 
 	return output, nil
+}
+
+func CheckQuestion(correctAnswer, userAnswer, username string) (bool, error) {
+	var user models.User
+
+	// get database
+	db := config.GetDB()
+
+	// decrypt correct answer
+	answer, err := Decrypt(correctAnswer)
+	if err != nil {
+		log.Println(20, err)
+		return false, fmt.Errorf("something went wrong please try again later")
+	}
+	// checking user answer with decrypted answer
+	if answer == userAnswer {
+		// get user ID from database
+		err = db.QueryRow("SELECT id FROM users WHERE username = ?;", username).Scan(&user.ID)
+		if err != nil {
+			log.Println(10, err)
+			return false, fmt.Errorf("something went wrong please try again later")
+		}
+
+		// update user score in database
+		_, err = db.Exec("UPDATE scores SET score = score + 1 WHERE user_id = ?;", user.ID)
+		if err != nil {
+			log.Println(30, err)
+			return false, fmt.Errorf("something went wrong please try again later")
+		}
+		return true, nil
+	}
+
+	return false, nil
 }
