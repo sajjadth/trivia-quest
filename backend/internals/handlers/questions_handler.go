@@ -24,5 +24,5 @@ func GetQuestions(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "results": questions.Questions})
+	c.JSON(http.StatusOK, gin.H{"success": true, "results": questions})
 }
