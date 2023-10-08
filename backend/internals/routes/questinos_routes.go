@@ -10,5 +10,6 @@ func SetupQuestionRoutes(router *gin.RouterGroup) {
 	questions := router.Group("/questions", middlewares.AuthMiddleware())
 	{
 		questions.POST("/get", handlers.GetQuestions)
+		questions.POST("/check", handlers.CheckQuestion)
 	}
 }
