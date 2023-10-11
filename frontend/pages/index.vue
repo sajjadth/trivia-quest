@@ -163,7 +163,7 @@
     flex-direction: row !important
     background: url("../assets/images/blob.svg") center no-repeat
     background-size: cover
-    @media (max-width: 975px )
+    @media (max-width: $large-screen )
       flex-direction: column !important
     #title
       width: 100%
@@ -173,7 +173,7 @@
       align-items: center
       justify-content: flex-end
       overflow: hidden
-      @media (max-width: 640px)
+      @media (max-width: $medium-screen)
         margin: 0
         justify-content: center !important
       &-main
@@ -181,7 +181,7 @@
       &-image
         height: 375px
         width: 300px
-        @media (max-width: 975px)
+        @media (max-width: $large-screen)
           display: none
 
     #right-side
@@ -203,9 +203,9 @@
         display: flex
         align-items: center
         justify-content: center
-        @media (max-width: 975px)
+        @media (max-width: $large-screen)
           display: none
-        @media (max-height: 800px)
+        @media (max-height: $medium-screen)
           display: none
 </style>
 
