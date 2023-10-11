@@ -1,7 +1,9 @@
 <template>
   <div id="header">
     <div id="main">
-      <h3>Trivia Quest</h3>
+      <NuxtLink id="title" to="/">
+        <h3>Trivia Quest</h3>
+      </NuxtLink>
       <div id="links">
         <NuxtLink to="/login">
           <v-btn variant="text"> login </v-btn>
@@ -32,6 +34,8 @@
     align-items: center
     justify-content: space-between
     padding: 20px
+  #title
+    text-decoration: none
   #links
     width: 200px
     display: flex
