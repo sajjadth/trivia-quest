@@ -48,7 +48,10 @@
               ></v-text-field>
             </v-window-item>
 
-            <div v-if="step ===1" class="d-flex flex-column align-center justify-center">
+            <div
+              v-if="step === 1"
+              class="d-flex flex-column align-center justify-center"
+            >
               <h1 class="text-h4 text-center">Verify Your Email</h1>
               <p class="text-caption w-75 text-center text-grey-darken-1">
                 We are sending a OTP to validate your Email addres. Hang on!
@@ -59,20 +62,24 @@
                 <VOtpInput variant="outlined"></VOtpInput>
               </v-card-text>
             </v-window-item>
-            <div v-if="step ===1" class="d-flex flex-column align-center justify-center">
+            <div
+              v-if="step === 1"
+              class="d-flex flex-column align-center justify-center"
+            >
               <p class="text-caption w-75 text-center text-grey-darken-1">
-                An OTP has been sent to your email. Please check your spam folder too.
+                An OTP has been sent to your email. Please check your spam
+                folder too.
               </p>
             </div>
           </v-window>
 
           <p v-if="step === 0" class="text-caption text-center">
             By signing up, you agree to our
-            <NuxtLink to="#"> Terms </NuxtLink>
-            . Learn how we collect, use and share your data in our
-            <NuxtLink to="#"> Privacy Policy </NuxtLink>
-            and how we use cookies and similar technology in our
-            <NuxtLink to="#"> Cookies Policy </NuxtLink>
+            <NuxtLink to="#">Terms</NuxtLink>
+            ,
+            <NuxtLink to="#">Privacy Policy</NuxtLink>
+            , and
+            <NuxtLink to="#">Cookies Policy</NuxtLink>
             .
           </p>
 
