@@ -3,6 +3,7 @@
     <div id="left-side"></div>
     <div id="right-side">
       <form action="">
+        <!-- Card component with dynamic properties based on step -->
         <v-card
           :prepend-icon="setTitleIcon"
           :title="setTitle"
@@ -11,11 +12,17 @@
           max-width="500"
           variant="text"
         >
-          <h1 v-if="step === 0" class="text-h5 text-center">
-            Join the Quest for Knowledge!
-          </h1>
-          <v-window v-model="step">
+          <!-- Window component to toggle between different steps -->
+          <v-window flat v-model="step">
+            <!-- Step 0  user info-->
             <v-window-item :value="0">
+              <!-- Card title for step 0 -->
+              <v-card-title>
+                <h1 class="text-h5 text-center">
+                  Join the Quest for Knowledge!
+                </h1>
+              </v-card-title>
+              <!-- Input fields for step 0 -->
               <v-text-field
                 label="Email"
                 placeholder="example@domain.com"
@@ -46,48 +53,65 @@
                 variant="solo"
                 @click:append-inner="passwordVisible = !passwordVisible"
               ></v-text-field>
+              <!-- Card subtitle for step 0 -->
+              <v-card-subtitle>
+                <p class="text-center">
+                  Have an account?
+                  <NuxtLink to="/login"> Log in </NuxtLink>
+                </p>
+                <!-- Legal information links -->
+                <p class="white-space-normal text-caption text-center">
+                  By signing up, you agree to our
+                  <NuxtLink to="#">Terms</NuxtLink>
+                  ,
+                  <NuxtLink to="#">Privacy Policy</NuxtLink>
+                  , and
+                  <NuxtLink to="#">Cookies Policy</NuxtLink>
+                  .
+                </p>
+              </v-card-subtitle>
             </v-window-item>
 
-            <div
-              v-if="step === 1"
-              class="d-flex flex-column align-center justify-center"
-            >
-              <h1 class="text-h4 text-center">Verify Your Email</h1>
-              <p class="text-caption w-75 text-center text-grey-darken-1">
-                We are sending a OTP to validate your Email addres. Hang on!
-              </p>
-            </div>
+            <!-- Step 1  verify email-->
             <v-window-item :value="1">
+              <!-- Card title for step 1 -->
+              <v-card-title
+                class="d-flex w-100 flex-column align-center justify-center"
+              >
+                <h1 class="text-h4 text-center">Verify Your Email</h1>
+                <p
+                  class="white-space-normal text-caption w-75 text-center text-grey-darken-1"
+                >
+                  We are sending a OTP to validate your Email addres. Hang on!
+                </p>
+              </v-card-title>
+              <!-- OTP input field -->
               <v-card-text>
                 <VOtpInput variant="outlined"></VOtpInput>
               </v-card-text>
+              <!-- Card subtitle for step 1 -->
+              <v-card-subtitle>
+                <div
+                  class="d-flex flex-column align-center justify-center w-100"
+                >
+                  <p
+                    class="white-space-normal text-caption w-75 text-center text-grey-darken-1"
+                  >
+                    An OTP has been sent to your email. Please check your spam
+                    folder too.
+                  </p>
+                </div>
+              </v-card-subtitle>
             </v-window-item>
-            <div
-              v-if="step === 1"
-              class="d-flex flex-column align-center justify-center"
-            >
-              <p class="text-caption w-75 text-center text-grey-darken-1">
-                An OTP has been sent to your email. Please check your spam
-                folder too.
-              </p>
-            </div>
           </v-window>
 
-          <p v-if="step === 0" class="text-caption text-center">
-            By signing up, you agree to our
-            <NuxtLink to="#">Terms</NuxtLink>
-            ,
-            <NuxtLink to="#">Privacy Policy</NuxtLink>
-            , and
-            <NuxtLink to="#">Cookies Policy</NuxtLink>
-            .
-          </p>
-
+          <!-- Card actions (buttons) -->
           <v-card-actions>
+            <!-- Back button (visible in step 1) -->
             <v-btn v-if="step === 1" variant="text" @click="step--">
               Back
             </v-btn>
-            <!-- <v-spacer></v-spacer> -->
+            <!-- Register button (visible in step 0) -->
             <v-btn
               v-if="step === 0"
               color="primary"
@@ -96,6 +120,7 @@
               class="flex-grow-1"
             >
               Register
+              <!-- Submit button (visible in step 1) -->
             </v-btn>
             <v-btn
               v-if="step === 1"
@@ -107,10 +132,6 @@
               Submit
             </v-btn>
           </v-card-actions>
-          <p class="text-center" v-if="step === 0">
-            Have an account?
-            <NuxtLink to="/login"> Log in </NuxtLink>
-          </p>
         </v-card>
       </form>
     </div>
@@ -118,6 +139,8 @@
 </template>
 
 <style lang="sass" scoped>
+.white-space-normal
+  white-space: normal
 #main
     width: 100%
     height: 100%
@@ -173,9 +196,11 @@ export default {
     };
   },
   computed: {
+    // Dynamic title for the card based on the current step
     setTitle() {
       return this.step === 0 ? "Create Account" : "Confirm Email";
     },
+    // Dynamic icon for the card based on the current step
     setTitleIcon() {
       return this.step === 0 ? "mdi-account-plus" : "mdi-email-fast";
     },
