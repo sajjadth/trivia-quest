@@ -116,10 +116,11 @@ func SendConfirmationEmail(email, verificationCode string) (bool, error) {
 
 	// url for sending confirmation email
 	emailUrl := fmt.Sprintf(
-		"https://api.elasticemail.com/v2/email/send?apikey=%v&msgTo=%v&from=%v&subject=Verification%%20Code&body=verification%%20code:%%20%v",
+		"https://api.elasticemail.com/v2/email/send?apikey=%v&msgTo=%v&from=%v&subject=Verification%%20Code&template=verification-code-trivia-quest-main&merge_email=%s&merge_code=%s",
 		emailApiKey,
 		email,
 		emailSender,
+		email,
 		verificationCode)
 
 	// sending confirmatino email
