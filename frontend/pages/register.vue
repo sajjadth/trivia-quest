@@ -5,15 +5,15 @@
       <form action="">
         <!-- Card component with dynamic properties based on step -->
         <v-card
-          :prepend-icon="setTitleIcon"
-          :title="setTitle"
+          :prepend-icon="store.setTitleIcon"
+          :title="store.setTitle"
           id="card"
           class="mx-auto"
           max-width="500"
           variant="text"
         >
           <!-- Window component to toggle between different steps -->
-          <v-window flat v-model="step">
+          <v-window flat v-model="store.step">
             <!-- Step 0  user info-->
             <v-window-item :value="0">
               <!-- Card title for step 0 -->
@@ -37,21 +37,25 @@
               ></v-text-field>
               <v-text-field
                 label="Password"
-                :append-inner-icon="passwordVisible ? 'mdi-eye-off' : 'mdi-eye'"
-                :type="passwordVisible ? 'text' : 'password'"
+                :append-inner-icon="
+                  store.info.passwordVisible ? 'mdi-eye-off' : 'mdi-eye'
+                "
+                :type="store.info.passwordVisible ? 'text' : 'password'"
                 density="compact"
                 placeholder="Enter your password"
                 variant="solo"
-                @click:append-inner="passwordVisible = !passwordVisible"
+                @click:append-inner="store.handlePasswordVisibility"
               ></v-text-field>
               <v-text-field
                 label="Confirm Password"
-                :append-inner-icon="passwordVisible ? 'mdi-eye-off' : 'mdi-eye'"
-                :type="passwordVisible ? 'text' : 'password'"
+                :append-inner-icon="
+                  store.info.passwordConfirmVisible ? 'mdi-eye-off' : 'mdi-eye'
+                "
+                :type="store.info.passwordConfirmVisible ? 'text' : 'password'"
                 density="compact"
                 placeholder="Confirm your password"
                 variant="solo"
-                @click:append-inner="passwordVisible = !passwordVisible"
+                @click:append-inner="store.handlePasswordConfirmVisibility"
               ></v-text-field>
               <!-- Card subtitle for step 0 -->
               <v-card-subtitle>
@@ -96,13 +100,13 @@
                   class="d-flex flex-row align-center justify-center"
                 >
                   <p id="time" class="text-h6">
-                    {{ getParsedTimer }}
+                    {{ store.getParsedTimer }}
                   </p>
                 </div>
                 <v-progress-linear
                   class="w-75"
                   style="margin: 0 0 10px 0"
-                  :model-value="timer / 3"
+                  :model-value="store.getPercentageOfTimer"
                 ></v-progress-linear>
                 <div
                   class="d-flex flex-column align-center justify-center w-100"
@@ -117,7 +121,7 @@
                     folder too.
                   </p>
                   <v-btn
-                    @click="sendEmailAgain"
+                    @click="store.sendEmailAgain"
                     variant="plain"
                     :disabled="timer !== 0"
                   >
@@ -131,25 +135,28 @@
           <!-- Card actions (buttons) -->
           <v-card-actions>
             <!-- Back button (visible in step 1) -->
-            <v-btn v-if="step === 1" variant="text" @click="step--">
+            <v-btn
+              v-if="store.step === 1"
+              variant="text"
+              @click="store.previousStep"
+            >
               Edit
             </v-btn>
             <!-- Register button (visible in step 0) -->
             <v-btn
-              v-if="step === 0"
+              v-if="store.step === 0"
               color="primary"
               variant="elevated"
-              @click="step++"
               class="flex-grow-1"
+              @click="store.nextStep"
             >
               Register
               <!-- Submit button (visible in step 1) -->
             </v-btn>
             <v-btn
-              v-if="step === 1"
+              v-if="store.step === 1"
               color="primary"
               variant="elevated"
-              @click="step++"
               class="flex-grow-1"
             >
               Submit
@@ -211,63 +218,19 @@
 
 <script>
 import { VOtpInput } from "vuetify/labs/VOtpInput";
+import { useUserStore } from "../store/user.js";
+// import {mapState} from
 export default {
-  data() {
-    return {
-      step: 0,
-      passwordVisible: false,
-      timer: 300,
-      timerInterval: null,
-    };
-  },
-  methods: {
-    // Starting timer and stops when timer ends
-    startTimer() {
-      if (this.timer === 0) this.timer = 300;
-      this.timerInterval = setInterval(
-        function () {
-          if (this.timer != 0) this.timer--;
-          else this.stopTimer();
-        }.bind(this),
-        1000
-      );
-    },
-    // Stopping timer
-    stopTimer() {
-      clearInterval(this.timerInterval);
-    },
-    // Send new verrification code to email
-    sendEmailAgain() {
-      this.startTimer();
-    },
-  },
-  computed: {
-    // Dynamic title for the card based on the current step
-    setTitle() {
-      return this.step === 0 ? "Create Account" : "Confirm Email";
-    },
-    // Dynamic icon for the card based on the current step
-    setTitleIcon() {
-      return this.step === 0 ? "mdi-account-plus" : "mdi-email-fast";
-    },
-    // Parsing time to display it properly in the DOM
-    getParsedTimer() {
-      const minute =
-        this.timer / 60 < 10
-          ? "0" + Math.floor(this.timer / 60)
-          : Math.floor(this.timer / 60);
-      const seconds =
-        this.timer % 60 < 10 ? "0" + (this.timer % 60) : this.timer % 60;
-
-      return minute + " : " + seconds;
-    },
+  setup() {
+    const store = useUserStore();
+    return { store: store };
   },
   components: {
     VOtpInput,
   },
   updated() {
     // Start timer when step is 1
-    if (this.step === 1) this.startTimer();
+    if (this.store.step === 1) this.store.startTimer();
   },
 };
 </script>

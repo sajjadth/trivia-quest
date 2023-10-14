@@ -86,5 +86,8 @@ export const useUserStore = defineStore("user", {
     setTitleIcon: (state) => {
       return state.step === 0 ? "mdi-account-plus" : "mdi-email-fast";
     },
+    getPercentageOfTimer: (state) => {
+      return state.timer.timer / 3;
+    },
   },
 });
