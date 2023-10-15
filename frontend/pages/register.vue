@@ -27,13 +27,13 @@
                 label="Email"
                 placeholder="example@domain.com"
                 variant="solo"
-                :type="email"
+                type="email"
               ></v-text-field>
               <v-text-field
                 label="Username"
                 placeholder="Adam221"
                 variant="solo"
-                :type="text"
+                type="text"
               ></v-text-field>
               <v-text-field
                 label="Password"
@@ -123,7 +123,7 @@
                   <v-btn
                     @click="store.sendEmailAgain"
                     variant="plain"
-                    :disabled="timer !== 0"
+                    :disabled="store.timer.timer !== 0"
                   >
                     Send Again
                   </v-btn>
