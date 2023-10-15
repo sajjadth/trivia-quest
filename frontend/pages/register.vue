@@ -2,7 +2,7 @@
   <div id="main">
     <div id="left-side"></div>
     <div id="right-side">
-      <form action="">
+      <form @submit.prevent>
         <!-- Card component with dynamic properties based on step -->
         <v-card
           :prepend-icon="store.setTitleIcon"
@@ -24,18 +24,40 @@
               </v-card-title>
               <!-- Input fields for step 0 -->
               <v-text-field
+                class="text-field"
+                v-model="store.info.email"
+                :rules="[
+                  store.rules.email,
+                  store.rules.required,
+                  store.rules.maxCounter,
+                  store.rules.minCounter,
+                ]"
                 label="Email"
                 placeholder="example@domain.com"
                 variant="solo"
                 type="email"
               ></v-text-field>
               <v-text-field
+                class="text-field"
+                v-model="store.info.username"
+                :rules="[
+                  store.rules.required,
+                  store.rules.maxCounter,
+                  store.rules.minCounter,
+                ]"
                 label="Username"
                 placeholder="Adam221"
                 variant="solo"
                 type="text"
               ></v-text-field>
               <v-text-field
+                class="text-field"
+                :rules="[
+                  store.rules.required,
+                  store.rules.maxCounter,
+                  store.rules.minCounter,
+                ]"
+                v-model="store.info.password"
                 label="Password"
                 :append-inner-icon="
                   store.info.passwordVisible ? 'mdi-eye-off' : 'mdi-eye'
@@ -47,6 +69,13 @@
                 @click:append-inner="store.handlePasswordVisibility"
               ></v-text-field>
               <v-text-field
+                class="text-field"
+                :rules="[
+                  store.rules.required,
+                  store.rules.maxCounter,
+                  store.rules.minCounter,
+                ]"
+                v-model="store.info.passwordConfirm"
                 label="Confirm Password"
                 :append-inner-icon="
                   store.info.passwordConfirmVisible ? 'mdi-eye-off' : 'mdi-eye'
@@ -90,9 +119,16 @@
                 </p>
               </v-card-title>
               <!-- OTP input field -->
-              <v-card-text>
-                <VOtpInput variant="outlined"></VOtpInput>
-              </v-card-text>
+              <form @submit.prevent>
+                <v-card-text>
+                  <VOtpInput
+                    v-model="store.info.verificationsCode"
+                    variant="outlined"
+                    length="6"
+                    type="number"
+                  ></VOtpInput>
+                </v-card-text>
+              </form>
               <!-- Card subtitle for step 1 -->
               <v-card-subtitle>
                 <div
@@ -148,7 +184,8 @@
               color="primary"
               variant="elevated"
               class="flex-grow-1"
-              @click="store.nextStep"
+              @click="store.handleRegisterUser"
+              type="submit"
             >
               Register
               <!-- Submit button (visible in step 1) -->
@@ -158,6 +195,8 @@
               color="primary"
               variant="elevated"
               class="flex-grow-1"
+              @click="store.verifyUser"
+              type="submit"
             >
               Submit
             </v-btn>
@@ -169,6 +208,8 @@
 </template>
 
 <style lang="sass" scoped>
+.text-field
+  margin-bottom: 5px
 .white-space-normal
   white-space: normal
 #main
