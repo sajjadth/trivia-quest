@@ -60,6 +60,7 @@ export const useUserStore = defineStore("user", {
     },
     // verify user with verification code sended to user email
     verifyUser() {
+      this.step++;
       console.log(this.info.verificationsCode);
       console.log("verified!");
     },
@@ -127,11 +128,19 @@ export const useUserStore = defineStore("user", {
     },
     // Dynamic title for the card based on the current step
     setTitle: (state) => {
-      return state.step === 0 ? "Create Account" : "Confirm Email";
+      return state.step === 0
+        ? "Create Account"
+        : state.step === 1
+        ? "Confirm Email"
+        : "Done";
     },
     // Dynamic icon for the card based on the current step
     setTitleIcon: (state) => {
-      return state.step === 0 ? "mdi-account-plus" : "mdi-email-fast";
+      return state.step === 0
+        ? "mdi-account-plus"
+        : state.step === 1
+        ? "mdi-email-fast"
+        : "mdi-check";
     },
     getPercentageOfTimer: (state) => {
       return state.timer.timer / 3;
