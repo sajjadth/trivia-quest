@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { info } from "sass";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -27,6 +26,11 @@ export const useUserStore = defineStore("user", {
           /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return pattern.test(value) || "Invalid e-mail.";
       },
+    },
+    snackbar: {
+      stat: false,
+      message: "",
+      color: "",
     },
   }),
   actions: {
@@ -95,6 +99,16 @@ export const useUserStore = defineStore("user", {
     // Send new verrification code to email
     sendEmailAgain() {
       this.startTimer();
+    },
+    openSnackbar(message, color) {
+      this.snackbar.color = color;
+      this.snackbar.message = message;
+      this.snackbar.stat = true;
+    },
+    closeSnackbar() {
+      this.snackbar.stat = false;
+      this.snackbar.color = "";
+      this.snackbar.message = "";
     },
   },
   getters: {
