@@ -181,6 +181,18 @@
                 </div>
               </v-card-subtitle>
             </v-window-item>
+            <v-window-item :value="3">
+              <div id="done-image"></div>
+              <div class="pa-4 text-center">
+                <h3 class="text-h6 font-weight-light mb-2">
+                  Welcome to Trivia Quest
+                </h3>
+                <p class="text-caption text-grey">Thanks for signing up!</p>
+                <p class="text-caption text-grey">
+                  Now you will be redirected to login
+                </p>
+              </div>
+            </v-window-item>
           </v-window>
 
           <!-- Card actions (buttons) -->
@@ -270,6 +282,11 @@
                     margin: 10px
                     span
                         margin: 2px
+            #done-image
+              background: url("../assets/images/sammy-done.png") center no-repeat
+              background-size: contain
+              width: 100%
+              height: 50vh
 </style>
 
 <script>
