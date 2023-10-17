@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/sajjadth/trivia-quest/config"
+	"github.com/sajjadth/trivia-quest/internals/middlewares"
 	"github.com/sajjadth/trivia-quest/internals/routes"
 )
 
@@ -17,7 +18,7 @@ func main() {
 
 	// run app
 	app := config.GetRouter()
-	router := app.Group("/api/v1")
+	router := app.Group("/api/v1", middlewares.CORSMiddleware())
 	routes.SetupAuthRoutes(router)
 	routes.SetupQuestionRoutes(router)
 	app.Run(appPort)
