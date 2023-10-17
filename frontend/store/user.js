@@ -32,6 +32,7 @@ export const useUserStore = defineStore("user", {
       message: "",
       color: "",
     },
+    loading: false,
   }),
   actions: {
     // register user
