@@ -59,6 +59,7 @@
                   store.rules.required,
                   store.rules.maxCounter,
                   store.rules.minCounter,
+                  store.rules.username,
                 ]"
                 label="Username"
                 placeholder="Adam221"
@@ -71,6 +72,7 @@
                   store.rules.required,
                   store.rules.maxCounter,
                   store.rules.minCounter,
+                  store.rules.password,
                 ]"
                 v-model="store.info.password"
                 label="Password"
@@ -89,6 +91,11 @@
                   store.rules.required,
                   store.rules.maxCounter,
                   store.rules.minCounter,
+                  (value) => {
+                    return (
+                      store.info.password === value || `Passwords don't match.`
+                    );
+                  },
                 ]"
                 v-model="store.info.passwordConfirm"
                 label="Confirm Password"
