@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
-    ok: false,
     info: {
       email: "",
       username: "",
@@ -93,7 +92,6 @@ export const useUserStore = defineStore("user", {
           .then((data) => {
             if (!data.success) {
               this.openSnackbar(data.error, "error");
-              console.log("res", res);
             } else {
               this.openSnackbar(data.message, "success");
               this.step++;
@@ -112,9 +110,27 @@ export const useUserStore = defineStore("user", {
     },
     // verify user with verification code sended to user email
     verifyUser() {
-      this.step++;
-      console.log(this.info.verificationsCode);
-      console.log("verified!");
+      this.loading = true;
+      fetch("http://localhost:8080/api/v1/auth/email/verify", {
+        method: "POST",
+        body: JSON.stringify({
+          verification_code: this.info.verificationsCode,
+          email: this.info.email,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.success) {
+            this.openSnackbar(data.error, "error");
+          } else {
+            this.step++;
+            setTimeout(() => {
+              navigateTo("/login");
+            }, 5000);
+          }
+        })
+        .catch((err) => console.log("error:", err))
+        .finally(() => (this.loading = false));
     },
     // Change visibility of password
     handlePasswordVisibility() {
