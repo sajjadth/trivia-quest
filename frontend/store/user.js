@@ -62,6 +62,7 @@ export const useUserStore = defineStore("user", {
       // Destructure properties from this.info and this.rules for easier access
       const { passwordConfirm } = this.info;
       const { email, minCounter, maxCounter, password, username } = this.rules;
+
       // Array of validation checks
       const isValid = [
         email(this.info.email),
@@ -77,22 +78,36 @@ export const useUserStore = defineStore("user", {
       ].every((result) => result === true);
 
       // If all checks pass, register user
-      console.log(
-        email(this.info.email),
-        minCounter(this.info.username),
-        maxCounter(this.info.username),
-        minCounter(this.info.password),
-        maxCounter(this.info.password),
-        minCounter(passwordConfirm),
-        maxCounter(passwordConfirm),
-        password(this.info.password),
-        username(this.info.username),
-        this.info.password === passwordConfirm
-      );
       if (isValid) {
         // User registration
-        console.log("user registered!");
-        this.step++;
+        this.loading = true;
+        fetch("http://localhost:8080/api/v1/auth/register", {
+          method: "POST",
+          body: JSON.stringify({
+            username: this.info.username,
+            password: this.info.password,
+            email: this.info.email,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.success) {
+              this.openSnackbar(data.error, "error");
+              console.log("res", res);
+            } else {
+              this.openSnackbar(data.message, "success");
+              this.step++;
+            }
+          })
+          .catch((err) => console.log("err", err))
+          .finally(() => {
+            this.loading = false;
+          });
+      } else {
+        this.openSnackbar(
+          "Oops! It seems you missed a few fields. Please complete all required inputs.",
+          "error"
+        );
       }
     },
     // verify user with verification code sended to user email
