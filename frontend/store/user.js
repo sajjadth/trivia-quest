@@ -164,10 +164,22 @@ export const useUserStore = defineStore("user", {
     // Stopping timer
     stopTimer() {
       clearInterval(this.timer.timerInterval);
+      this.timer.timerInterval = null;
     },
     // Send new verrification code to email
     sendEmailAgain() {
-      this.startTimer();
+      this.loading = true;
+      fetch("http://localhost:8080/api/v1/auth/email/send", {
+        method: "POST",
+        body: JSON.stringify({ email: this.info.email }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          this.openSnackbar("New code sent. Check your inbox!", "success");
+          this.startTimer();
+        })
+        .catch((err) => console.log("error:", err))
+        .finally(() => (this.loading = false));
     },
     openSnackbar(message, color) {
       this.snackbar.color = color;
