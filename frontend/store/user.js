@@ -26,6 +26,28 @@ export const useUserStore = defineStore("user", {
           /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return pattern.test(value) || "Invalid e-mail.";
       },
+      password: (value) => {
+        const lowercaseRegex = /[a-z]/;
+        const uppercaseRegex = /[A-Z]/;
+        const digitRegex = /\d/;
+        const specialCharRegex = /[@$!%*?&]/;
+        return lowercaseRegex.test(value)
+          ? uppercaseRegex.test(value)
+            ? digitRegex.test(value)
+              ? specialCharRegex.test(value)
+                ? true
+                : "Password must contain at least one special character."
+              : "Password must contain at least one digit."
+            : "Password must contain at least one uppercase letter."
+          : "Password must contain at least one lowercase letter.";
+      },
+      username: (value) => {
+        const pattern = /^[a-zA-Z0-9-_]+$/;
+        return (
+          pattern.test(value) ||
+          "Username must contain only letters (both uppercase and lowercase), numbers, underscores, and hyphens."
+        );
+      },
     },
     snackbar: {
       stat: false,
@@ -38,21 +60,35 @@ export const useUserStore = defineStore("user", {
     // register user
     handleRegisterUser() {
       // Destructure properties from this.info and this.rules for easier access
-      const { username, password, passwordConfirm } = this.info;
-      const { email, minCounter, maxCounter } = this.rules;
-
+      const { passwordConfirm } = this.info;
+      const { email, minCounter, maxCounter, password, username } = this.rules;
       // Array of validation checks
       const isValid = [
         email(this.info.email),
-        minCounter(username),
-        maxCounter(username),
-        minCounter(password),
-        maxCounter(password),
+        minCounter(this.info.username),
+        maxCounter(this.info.username),
+        minCounter(this.info.password),
+        maxCounter(this.info.password),
         minCounter(passwordConfirm),
         maxCounter(passwordConfirm),
+        password(this.info.password),
+        username(this.info.username),
+        this.info.password === passwordConfirm,
       ].every((result) => result === true);
 
       // If all checks pass, register user
+      console.log(
+        email(this.info.email),
+        minCounter(this.info.username),
+        maxCounter(this.info.username),
+        minCounter(this.info.password),
+        maxCounter(this.info.password),
+        minCounter(passwordConfirm),
+        maxCounter(passwordConfirm),
+        password(this.info.password),
+        username(this.info.username),
+        this.info.password === passwordConfirm
+      );
       if (isValid) {
         // User registration
         console.log("user registered!");
