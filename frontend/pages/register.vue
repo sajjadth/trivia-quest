@@ -26,6 +26,8 @@
           class="mx-auto"
           max-width="500"
           variant="text"
+          :disabled="store.loading"
+          :loading="store.loading"
         >
           <!-- Window component to toggle between different steps -->
           <v-window flat v-model="store.step">
@@ -209,6 +211,7 @@
               v-if="store.step === 1"
               variant="text"
               @click="store.previousStep"
+              disabled
             >
               Edit
             </v-btn>
@@ -220,6 +223,7 @@
               class="flex-grow-1"
               @click="store.handleRegisterUser"
               type="submit"
+              :loading="store.loading"
             >
               Register
               <!-- Submit button (visible in step 1) -->
@@ -231,6 +235,8 @@
               class="flex-grow-1"
               @click="store.verifyUser"
               type="submit"
+              :disabled="store.info.verificationsCode.length !== 6"
+              :loading="store.loading"
             >
               Submit
             </v-btn>
