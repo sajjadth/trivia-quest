@@ -32,6 +32,11 @@ export default defineNuxtConfig({
       ],
     },
   },
+  runtimeConfig: {
+    public: {
+      API_BASE_URL: process.env.APP_API_BASE_URL,
+    },
+  },
   css: ["~/assets/styles/main.sass"],
   vite: {
     css: {
