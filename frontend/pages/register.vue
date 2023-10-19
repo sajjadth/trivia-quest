@@ -15,7 +15,9 @@
     </template>
   </v-snackbar>
   <div id="main">
-    <div id="left-side"></div>
+    <div id="left-side">
+      <Carousel />
+    </div>
     <div id="right-side">
       <form @submit.prevent>
         <!-- Card component with dynamic properties based on step -->
@@ -33,12 +35,6 @@
           <v-window flat v-model="store.step">
             <!-- Step 0  user info-->
             <v-window-item :value="0">
-              <!-- Card title for step 0 -->
-              <v-card-title>
-                <h1 class="text-h5 text-center">
-                  Join the Quest for Knowledge!
-                </h1>
-              </v-card-title>
               <!-- Input fields for step 0 -->
               <v-text-field
                 class="text-field"
@@ -269,11 +265,10 @@
     @media (max-width: $medium-screen)
         flex-direction: column
     #left-side
-        background: url("../assets/images/holly-mandarich.jpg") center no-repeat
-        background-size: cover
         width: 100%
         height: 100%
         border-radius: 20px
+        overflow: hidden
         @media (max-width: $medium-screen)
             height: 50%
     #right-side
