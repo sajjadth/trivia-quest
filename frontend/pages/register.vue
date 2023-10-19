@@ -180,6 +180,8 @@
                     An OTP has been sent to your email. Please check your spam
                     folder too.
                   </p>
+
+                  <!-- Button to send email again -->
                   <v-btn
                     @click="store.sendEmailAgain"
                     variant="plain"
@@ -190,6 +192,8 @@
                 </div>
               </v-card-subtitle>
             </v-window-item>
+
+            <!-- Step 3: Registration Complete -->
             <v-window-item :value="3">
               <div id="done-image"></div>
               <div class="pa-4 text-center">
@@ -206,7 +210,11 @@
 
           <!-- Card actions (buttons) -->
           <v-card-actions>
-            <!-- Back button (visible in step 1) -->
+            <!--
+                Back button is visible only in step 1.
+                It is currently disabled to allow for the addition 
+                of edit functionality in both the back and front end.
+            -->
             <v-btn
               v-if="store.step === 1"
               variant="text"
@@ -305,8 +313,8 @@
 <script>
 import { VOtpInput } from "vuetify/labs/VOtpInput";
 import { useUserStore } from "../store/user.js";
-// import {mapState} from
 export default {
+  // Get the user store using Pinia and return it as 'store'
   setup() {
     const store = useUserStore();
     return { store: store };
