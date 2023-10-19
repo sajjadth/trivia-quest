@@ -62,7 +62,7 @@ export const useUserStore = defineStore("user", {
       const { passwordConfirm } = this.info;
       const { email, minCounter, maxCounter, password, username } = this.rules;
 
-      // Array of validation checks
+      // Array of validation checks for registration form
       const isValid = [
         email(this.info.email),
         minCounter(this.info.username),
@@ -78,9 +78,10 @@ export const useUserStore = defineStore("user", {
 
       // If all checks pass, register user
       if (isValid) {
+        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
         // User registration
         this.loading = true;
-        fetch("http://localhost:8080/api/v1/auth/register", {
+        fetch(`${apiUrl}/auth/register`, {
           method: "POST",
           body: JSON.stringify({
             username: this.info.username,
@@ -110,8 +111,9 @@ export const useUserStore = defineStore("user", {
     },
     // verify user with verification code sended to user email
     verifyUser() {
+      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
       this.loading = true;
-      fetch("http://localhost:8080/api/v1/auth/email/verify", {
+      fetch(`${apiUrl}/auth/email/verify`, {
         method: "POST",
         body: JSON.stringify({
           verification_code: this.info.verificationsCode,
@@ -168,8 +170,9 @@ export const useUserStore = defineStore("user", {
     },
     // Send new verrification code to email
     sendEmailAgain() {
+      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
       this.loading = true;
-      fetch("http://localhost:8080/api/v1/auth/email/send", {
+      fetch(`${apiUrl}/auth/email/send`, {
         method: "POST",
         body: JSON.stringify({ email: this.info.email }),
       })
