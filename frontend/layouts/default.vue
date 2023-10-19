@@ -14,5 +14,5 @@
   align-items: center
   justify-content: flex-start
   width: 100%
-  height: 100svh
+  height: 100vh
 </style>
