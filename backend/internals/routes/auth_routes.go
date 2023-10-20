@@ -8,6 +8,7 @@ import (
 func SetupAuthRoutes(router *gin.RouterGroup) {
 	auth := router.Group("/auth")
 	{
+		auth.POST("/verify", handlers.VerifyUser)
 		auth.POST("/register", handlers.Register)
 		auth.POST("/login", handlers.Login)
 		auth.POST("/email/send", handlers.SendConfirmationEmail)
