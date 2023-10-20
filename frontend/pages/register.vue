@@ -321,5 +321,8 @@ export default {
     // Start timer when step is 1
     if (this.store.step === 1) this.store.startTimer();
   },
+  unmounted(){
+    this.store.$reset()
+  }
 };
 </script>
