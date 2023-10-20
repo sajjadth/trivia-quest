@@ -7,4 +7,5 @@ type User struct {
 	Email            string `json:"email"`
 	CreatedAt        string `json:"createdAt"`
 	VerificationCode string `json:"verification_code"`
+	Token            string `json:"token"`
 }
