@@ -89,7 +89,10 @@ func LoginUser(email, password string) (string, bool, error) {
 
 	// check if user exist in database
 	err := db.QueryRow(
-		"SELECT users.username, users.password, verification_attempts.verified FROM users, verification_attempts WHERE users.email = ?;",
+		`SELECT u.username, u.password, va.verified
+ 		 FROM verification_attempts va
+ 		 JOIN users u ON va.user_id = u.id
+ 		 WHERE u.email = ?;`,
 		email,
 	).Scan(&user.Username, &user.Password, &needConfirmation)
 	if err != nil {
