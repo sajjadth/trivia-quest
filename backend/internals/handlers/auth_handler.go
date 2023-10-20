@@ -139,3 +139,35 @@ func VerifyEmail(c *gin.Context) {
 			"success": true,
 		})
 }
+
+func VerifyUser(c *gin.Context) {
+	var user models.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"error":   "something went wrong please try again later",
+				"success": false,
+				"valid":   false,
+			})
+		return
+	}
+	isValid := services.VerifyUser(user.Token)
+	if !isValid {
+		c.JSON(
+			http.StatusUnauthorized,
+			gin.H{
+				"message": "Session Expired or Invalid Token",
+				"success": true,
+				"valid":   false,
+			})
+		return
+	}
+	c.JSON(
+		http.StatusUnauthorized,
+		gin.H{
+			"message": "Authentication Successful",
+			"success": true,
+			"valid":   true,
+		})
+}
