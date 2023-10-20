@@ -10,6 +10,7 @@ export const useUserStore = defineStore("user", {
       passwordVisible: false,
       passwordConfirmVisible: false,
       verificationsCode: "",
+      rememberMe: false,
     },
     timer: {
       timer: 300,
@@ -56,6 +57,43 @@ export const useUserStore = defineStore("user", {
     loading: false,
   }),
   actions: {
+    // login user
+    handleLoginUser() {
+      this.loading = true;
+      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+
+      fetch(`${apiUrl}/auth/login`, {
+        method: "POST",
+        body: JSON.stringify({
+          email: this.info.email,
+          password: this.info.password,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.success) {
+            this.openSnackbar(data.error, "error");
+          } else {
+            this.openSnackbar(
+              data.message,
+              data.need_confirmation ? "warning" : "success"
+            );
+            if (data.need_confirmation) {
+              this.step++;
+            } else {
+              this.step = 2;
+              if (this.info.rememberMe)
+                localStorage.setItem("token", data.token);
+              else sessionStorage.setItem("token", data.token);
+              setTimeout(() => {
+                navigateTo("/app");
+              }, 5000);
+            }
+          }
+        })
+        .catch((err) => console.log("error", err))
+        .finally(() => (this.loading = false));
+    },
     // register user
     handleRegisterUser() {
       // Destructure properties from this.info and this.rules for easier access
@@ -111,6 +149,8 @@ export const useUserStore = defineStore("user", {
     },
     // verify user with verification code sended to user email
     verifyUser() {
+      const route = useRouter().currentRoute.value.name;
+      const navigateToName = route === "login" ? "/app" : "/login";
       const apiUrl = useRuntimeConfig().public.API_BASE_URL;
       this.loading = true;
       fetch(`${apiUrl}/auth/email/verify`, {
@@ -127,7 +167,7 @@ export const useUserStore = defineStore("user", {
           } else {
             this.step++;
             setTimeout(() => {
-              navigateTo("/login");
+              navigateTo(navigateToName);
             }, 5000);
           }
         })
@@ -211,16 +251,21 @@ export const useUserStore = defineStore("user", {
     },
     // Dynamic title for the card based on the current step
     setTitle: (state) => {
+      const route = useRouter().currentRoute.value.name;
+      const stepOneTitle = route === "register" ? "Create Account" : "Login";
       return state.step === 0
-        ? "Create Account"
+        ? stepOneTitle
         : state.step === 1
         ? "Confirm Email"
         : "Done";
     },
     // Dynamic icon for the card based on the current step
     setTitleIcon: (state) => {
+      const route = useRouter().currentRoute.value.name;
+      const stepOneTitleIcon =
+        route === "register" ? "mdi-account-plus" : "mdi-login";
       return state.step === 0
-        ? "mdi-account-plus"
+        ? stepOneTitleIcon
         : state.step === 1
         ? "mdi-email-fast"
         : "mdi-check";
