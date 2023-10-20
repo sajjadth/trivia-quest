@@ -211,3 +211,9 @@ func EmailVerification(email string, code string) error {
 
 	return nil
 }
+
+func VerifyUser(token string) bool {
+	isValid, _ := tokens.Validate(token)
+
+	return isValid
+}
