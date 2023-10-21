@@ -6,10 +6,10 @@
       </NuxtLink>
       <div id="links">
         <NuxtLink to="/login">
-          <v-btn variant="text"> login </v-btn>
+          <v-btn :variant="handleLoginButtonVariant"> login </v-btn>
         </NuxtLink>
         <NuxtLink to="/register">
-          <v-btn variant="tonal"> register </v-btn>
+          <v-btn :variant="handleRegisterButtonVariant"> register </v-btn>
         </NuxtLink>
       </div>
     </div>
@@ -42,3 +42,16 @@
     align-items: center
     justify-content: space-between
 </style>
+
+<script>
+export default {
+  computed: {
+    handleLoginButtonVariant() {
+      return useRoute().name === "login" ? "tonal" : "plain";
+    },
+    handleRegisterButtonVariant() {
+      return useRoute().name !== "login" ? "tonal" : "plain";
+    },
+  },
+};
+</script>
