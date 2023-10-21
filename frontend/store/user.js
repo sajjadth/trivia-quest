@@ -149,8 +149,6 @@ export const useUserStore = defineStore("user", {
     },
     // verify user with verification code sended to user email
     verifyUser() {
-      const route = useRouter().currentRoute.value.name;
-      const navigateToName = route === "login" ? "/app" : "/login";
       const apiUrl = useRuntimeConfig().public.API_BASE_URL;
       this.loading = true;
       fetch(`${apiUrl}/auth/email/verify`, {
@@ -166,8 +164,10 @@ export const useUserStore = defineStore("user", {
             this.openSnackbar(data.error, "error");
           } else {
             this.step++;
+            if (this.info.rememberMe) localStorage.setItem("token", data.token);
+            else sessionStorage.setItem("token", data.token);
             setTimeout(() => {
-              navigateTo(navigateToName);
+              navigateTo("/app");
             }, 5000);
           }
         })
