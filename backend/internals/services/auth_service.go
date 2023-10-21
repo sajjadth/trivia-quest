@@ -148,9 +148,9 @@ func SendConfirmationEmail(email, verificationCode string) (bool, error) {
 	return true, nil
 }
 
-func EmailVerification(email string, code string) error {
+func EmailVerification(email string, code string) (string, error) {
 	// initial necessary variables
-	var verification_code string
+	var verification_code, username string
 	var createdAt []uint8
 	var verified bool
 	var userID int
@@ -160,15 +160,15 @@ func EmailVerification(email string, code string) error {
 
 	// get confirmation info
 	err := db.QueryRow(
-		`SELECT u.id, va.verification_code, va.verified, va.created_at
+		`SELECT u.id, u.username, va.verification_code, va.verified, va.created_at
  		 FROM verification_attempts va
  		 JOIN users u ON va.user_id = u.id
  		 WHERE u.email = ?;`,
 		email,
-	).Scan(&userID, &verification_code, &verified, &createdAt)
+	).Scan(&userID, &username, &verification_code, &verified, &createdAt)
 	if err != nil {
 		log.Println(err)
-		return fmt.Errorf("something went wrong please try again later")
+		return "", fmt.Errorf("something went wrong please try again later")
 	}
 
 	// parse time to solve type error
@@ -176,7 +176,7 @@ func EmailVerification(email string, code string) error {
 
 	// check if user already verified
 	if verified {
-		return fmt.Errorf("user already verified")
+		return "", fmt.Errorf("user already verified")
 	}
 
 	//send new confirmation code if code expired
@@ -187,29 +187,32 @@ func EmailVerification(email string, code string) error {
 		_, err := SendConfirmationEmail(email, verificationCode)
 		if err != nil {
 			log.Println(err)
-			return fmt.Errorf("something went wrong please try again later")
+			return "", fmt.Errorf("something went wrong please try again later")
 		}
 		db.Exec(
 			"UPDATE verification_attempts SET verification_code = ?, created_at = NOW() WHERE user_id = ?;",
 			verificationCode,
 			userID,
 		)
-		return fmt.Errorf("the verification code has expired")
+		return "", fmt.Errorf("the verification code has expired")
 	}
 
 	// check if user input and varification code is same
 	if code != verification_code {
-		return fmt.Errorf("incorrect Verification Code")
+		return "", fmt.Errorf("incorrect Verification Code")
 	}
 
 	// update the verification status of user in database
 	_, err = db.Exec("UPDATE verification_attempts SET verified = TRUE WHERE user_id = ?;", userID)
 	if err != nil {
 		log.Println(err)
-		return fmt.Errorf("something went wrong please try again later")
+		return "", fmt.Errorf("something went wrong please try again later")
 	}
 
-	return nil
+	// create new token for user and return it
+	token := tokens.Create(username)
+
+	return token, nil
 }
 
 func VerifyUser(token string) bool {
