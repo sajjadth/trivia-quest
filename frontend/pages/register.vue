@@ -198,7 +198,7 @@
                 </h3>
                 <p class="text-caption text-grey">Thanks for signing up!</p>
                 <p class="text-caption text-grey">
-                  Now you will be redirected to login
+                  Now you will be redirected to the game lobby.
                 </p>
               </div>
             </v-window-item>

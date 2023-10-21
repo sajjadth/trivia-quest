@@ -171,7 +171,7 @@
                   Click below to start playing now.
                 </p>
                 <p class="text-caption text-grey">
-                  Now you will be redirected to app
+                  Now you will be redirected to the game lobby.
                 </p>
               </div>
             </v-window-item>
@@ -294,8 +294,8 @@ export default {
     // Start timer when step is 1
     if (this.store.step === 1) this.store.startTimer();
   },
-  unmounted(){
-    this.store.$reset()
-  }
+  unmounted() {
+    this.store.$reset();
+  },
 };
 </script>
