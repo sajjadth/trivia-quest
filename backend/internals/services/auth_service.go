@@ -215,8 +215,6 @@ func EmailVerification(email string, code string) (string, error) {
 	return token, nil
 }
 
-func VerifyUser(token string) bool {
-	isValid, _ := tokens.Validate(token)
-
-	return isValid
+func VerifyUser(token string) (bool, string) {
+	return tokens.Validate(token)
 }

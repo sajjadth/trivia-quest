@@ -154,7 +154,7 @@ func VerifyUser(c *gin.Context) {
 			})
 		return
 	}
-	isValid := services.VerifyUser(user.Token)
+	isValid, username := services.VerifyUser(user.Token)
 	if !isValid {
 		c.JSON(
 			http.StatusUnauthorized,
@@ -168,8 +168,9 @@ func VerifyUser(c *gin.Context) {
 	c.JSON(
 		http.StatusUnauthorized,
 		gin.H{
-			"message": "Authentication Successful",
-			"success": true,
-			"valid":   true,
+			"message":  "Authentication Successful",
+			"username": username,
+			"success":  true,
+			"valid":    true,
 		})
 }
