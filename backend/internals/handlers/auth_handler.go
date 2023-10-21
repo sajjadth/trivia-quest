@@ -166,7 +166,7 @@ func VerifyUser(c *gin.Context) {
 		return
 	}
 	c.JSON(
-		http.StatusUnauthorized,
+		http.StatusOK,
 		gin.H{
 			"message":  "Authentication Successful",
 			"username": username,
