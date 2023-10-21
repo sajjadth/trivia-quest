@@ -3,7 +3,7 @@
   <v-app>
     <div id="container">
       <Header />
-      <NuxtPage />
+      <slot />
     </div>
   </v-app>
 </template>
