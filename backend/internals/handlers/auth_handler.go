@@ -90,7 +90,7 @@ func SendConfirmationEmail(c *gin.Context) {
 	}
 
 	// send new verification code to user
-	if err := services.EmailVerification(user.Email, ""); err != nil {
+	if _, err := services.EmailVerification(user.Email, ""); err != nil {
 		log.Println(err)
 		c.JSON(
 			http.StatusInternalServerError,
@@ -120,7 +120,8 @@ func VerifyEmail(c *gin.Context) {
 	}
 
 	// check user verification code
-	if err := services.EmailVerification(user.Email, user.VerificationCode); err != nil {
+	token, err := services.EmailVerification(user.Email, user.VerificationCode)
+	if err != nil {
 		log.Println(err)
 		c.JSON(
 			http.StatusInternalServerError,
@@ -136,6 +137,7 @@ func VerifyEmail(c *gin.Context) {
 		http.StatusOK,
 		gin.H{
 			"message": "Congratulations! Your email has been successfully verified. You're all set to enjoy our services.",
+			"token":   token,
 			"success": true,
 		})
 }
