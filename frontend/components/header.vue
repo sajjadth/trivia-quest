@@ -4,19 +4,51 @@
       <NuxtLink id="title" to="/">
         <h3>Trivia Quest</h3>
       </NuxtLink>
-      <div id="links">
-        <NuxtLink to="/login">
-          <v-btn :variant="handleLoginButtonVariant"> login </v-btn>
-        </NuxtLink>
-        <NuxtLink to="/register">
-          <v-btn :variant="handleRegisterButtonVariant"> register </v-btn>
-        </NuxtLink>
+      <div>
+        <v-menu v-if="store.sessionValid" min-width="200px" rounded>
+          <template v-slot:activator="{ props }">
+            <v-btn icon v-bind="props">
+              <v-avatar size="large">
+                <span class="text-h5">{{ store.username[0] }}</span>
+              </v-avatar>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-text>
+              <div class="mx-auto text-center d-flex flex-column">
+                <div
+                  id="menu-card-avatar"
+                  class="w-100 d-flex flex-column align-center justify-center"
+                >
+                  <v-avatar variant="tonal">
+                    <span class="text-h5">{{ store.username[0] }}</span>
+                  </v-avatar>
+                  <span>{{ store.username }}</span>
+                </div>
+                <v-divider class="my-3"></v-divider>
+                <v-btn variant="plain" disabled> Edit Account </v-btn>
+                <v-btn variant="plain"> LogoUt </v-btn>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+        <div id="links" v-else>
+          <NuxtLink to="/login">
+            <v-btn :variant="handleLoginButtonVariant"> login </v-btn>
+          </NuxtLink>
+          <NuxtLink to="/register">
+            <v-btn :variant="handleRegisterButtonVariant"> register </v-btn>
+          </NuxtLink>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style lang="sass">
+#menu-card-avatar
+  > *
+    margin: 5px !important
 #header
   width: 100%
   height: 10%
@@ -44,7 +76,12 @@
 </style>
 
 <script>
+import { useMainStore } from "../store/index";
 export default {
+  setup() {
+    const store = useMainStore();
+    return { store: store };
+  },
   computed: {
     handleLoginButtonVariant() {
       return useRoute().name === "login" ? "tonal" : "plain";
