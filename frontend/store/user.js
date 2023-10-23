@@ -86,7 +86,7 @@ export const useUserStore = defineStore("user", {
                 localStorage.setItem("token", data.token);
               else sessionStorage.setItem("token", data.token);
               setTimeout(() => {
-                navigateTo("/app");
+                reloadNuxtApp({ path: "/app" });
               }, 5000);
             }
           }
@@ -167,7 +167,7 @@ export const useUserStore = defineStore("user", {
             if (this.info.rememberMe) localStorage.setItem("token", data.token);
             else sessionStorage.setItem("token", data.token);
             setTimeout(() => {
-              navigateTo("/app");
+              reloadNuxtApp({ path: "/app" });
             }, 5000);
           }
         })
