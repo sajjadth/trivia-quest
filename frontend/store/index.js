@@ -11,39 +11,48 @@ export const useMainStore = defineStore("main", {
   actions: {
     // Define an action named 'verifyTokenAndGetUsername'
     verifyTokenAndGetUsername() {
-      // Get the current route name using Vue Router
-      const route = useRouter().currentRoute.value.name;
+      // Verify session if session is not valid
+      if (!this.sessionValid) {
+        // Get the current route name using Vue Router
+        const route = useRouter().currentRoute.value.name;
 
-      // Check if a token is available
-      if (this.token) {
-        // If a token is available, proceed with verification
-        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+        // Check if a token is available
+        if (this.token) {
+          // If a token is available, proceed with verification
+          const apiUrl = useRuntimeConfig().public.API_BASE_URL;
 
-        // Send a POST request to verify the token
-        fetch(`${apiUrl}/auth/verify`, {
-          method: "POST",
-          body: JSON.stringify({ token: this.token }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            // If verification is successful, update session status and username
-            if (data.success && data.valid) {
-              this.sessionValid = true;
-              this.username = data.username;
-              navigateTo("/app");
-            } else if (route === "app") {
-              // If the route is '/app' and verification fails, clear storage and redirect to '/login'
-              localStorage.clear();
-              sessionStorage.clear();
-              navigateTo("/login");
-            }
+          // Send a POST request to verify the token
+          fetch(`${apiUrl}/auth/verify`, {
+            method: "POST",
+            body: JSON.stringify({ token: this.token }),
           })
-          .catch((err) => {
-            console.log("error:", err);
-          });
-      } else {
-        // If no token is available, redirect to '/login'
-        if (route === "app") navigateTo("/login");
+            .then((res) => res.json())
+            .then((data) => {
+              // If verification is successful, update session status and username
+              if (data.success && data.valid) {
+                this.sessionValid = true;
+                this.username = data.username;
+                navigateTo("/app");
+              } else if (route === "app") {
+                // If the route is '/app' and verification fails, clear storage and redirect to '/login'
+                localStorage.clear();
+                sessionStorage.clear();
+                navigateTo("/login");
+              }
+            })
+            .catch((err) => {
+              console.log("error:", err);
+            });
+        } else {
+          // If no token is available, redirect to '/login'
+          if (route === "app") navigateTo("/login");
+        }
+      }
+    },
+    // If the user tries to exit the /app, don't allow it
+    handleGameRouteChange() {
+      if (this.sessionValid && this.token) {
+        navigateTo("/app");
       }
     },
   },
