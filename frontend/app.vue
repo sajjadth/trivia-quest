@@ -5,14 +5,14 @@
 </template>
 
 <script>
-import {useMainStore}from "./store/index"
+import { useMainStore } from "./store/index";
 export default {
-  setup(){
-    const store = useMainStore()
-    return {store: store}
+  setup() {
+    const store = useMainStore();
+    return { store: store };
   },
   mounted() {
-    this.store.verifyTokenAndGetUsername()
-  }
-}
+    this.store.verifyTokenAndGetUsername();
+  },
+};
 </script>
