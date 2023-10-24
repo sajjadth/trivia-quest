@@ -9,6 +9,7 @@ export const useMainStore = defineStore("main", {
   }),
   actions: {
     verifyTokenAndGetUsername() {
+      const route = useRouter().currentRoute.value.name;
       if (this.token) {
         const apiUrl = useRuntimeConfig().public.API_BASE_URL;
         fetch(`${apiUrl}/auth/verify`, {
@@ -21,11 +22,17 @@ export const useMainStore = defineStore("main", {
               this.sessionValid = true;
               this.username = data.username;
               navigateTo("/app");
+            } else if (route === "app") {
+              localStorage.clear();
+              sessionStorage.clear();
+              navigateTo("/login");
             }
           })
           .catch((err) => {
             console.log("error:", err);
           });
+      } else {
+        if (route === "app") navigateTo("/login");
       }
     },
   },
