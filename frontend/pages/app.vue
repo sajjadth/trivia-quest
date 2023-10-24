@@ -1,16 +1,104 @@
 <template>
-  <h1>app</h1>
+  <!-- Main container -->
+  <div id="container">
+     <!-- Main content area -->
+    <div
+      id="main"
+      class="d-flex flex-column align-center justify-center w-100 h-100"
+    >
+    <!-- Card containing question options -->
+      <v-card id="select-card" class="rounded-xl">
+        <!-- Card title -->
+        <v-card-title>
+          <h1 class="text-h4 white-space-normal">Question Type Selector</h1>
+        </v-card-title>
+         <!-- Card subtitle -->
+        <v-card-subtitle>
+          <p class="text-subtitle-1">Customize Your Trivia Experience</p>
+        </v-card-subtitle>
+        <!-- Divider line -->
+        <v-divider />
+        <!-- Card content -->
+        <v-card-text>
+          <!-- Input field for number of questions -->
+          <v-text-field
+            type="number"
+            :rules="[
+              (value) => Number(value) >= 1 || 'Should be more than 0',
+              (value) => Number(value) <= 20 || 'Should be less than 21',
+            ]"
+            label="Number of Questions:"
+            variant="outlined"
+          ></v-text-field>
+          <!-- Dropdown for selecting category -->
+          <v-select
+            label="Select Category:"
+            :items="[
+              'Any Category',
+              'California',
+              'Colorado',
+              'Florida',
+              'Georgia',
+              'Texas',
+              'Wyoming',
+            ]"
+            variant="outlined"
+          ></v-select>
+          <!-- Dropdown for selecting difficulty -->
+          <v-select
+            label="Select Difficulty:"
+            :items="['Any Difficulty', 'Easy', 'Medium', 'Hard']"
+            variant="outlined"
+          ></v-select>
+          <!-- Dropdown for selecting question type -->
+          <v-select
+            label="Select Type:"
+            :items="['Any Type', 'Multiple Chois', 'True/False']"
+            variant="outlined"
+          ></v-select>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn block variant="tonal">Start</v-btn>
+        </v-card-actions>
+      </v-card>
+    </div>
+  </div>
 </template>
 
 <script>
 import { useMainStore } from "../store/index";
 export default {
   setup() {
+    // Access the main store using Composition API
     const store = useMainStore();
     return { store: store };
   },
+  mounted() {
+    // When the component is mounted, verify token and get username
+    this.store.verifyTokenAndGetUsername();
+  },
   beforeRouteLeave() {
+    // Prevent route change, if token exist and token is valid
     this.store.verifyTokenAndGetUsername();
   },
 };
 </script>
+
+<style lang="sass" scoped>
+.white-space-normal
+  white-space: normal
+#select-card
+  padding: 20px
+  width: 500px 
+  @media (max-width: $small-screen)
+    width: 95%
+
+#container
+  padding: 0 10px 10px 10px
+  #main
+    width: 100%
+    height: 100%
+    border-radius: 20px
+    background: url("../assets/images/background-pattern.svg")
+    background-position: center
+</style>
