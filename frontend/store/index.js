@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useQuestionsStore } from "./questions";
 
 export const useMainStore = defineStore("main", {
   state: () => ({
@@ -7,12 +8,16 @@ export const useMainStore = defineStore("main", {
       localStorage.getItem("token") || sessionStorage.getItem("token") || null,
     username: null,
     sessionValid: false,
+    loading: false,
   }),
   actions: {
     // Define an action named 'verifyTokenAndGetUsername'
     verifyTokenAndGetUsername() {
       // Verify session if session is not valid
       if (!this.sessionValid) {
+        // Start loading
+        this.loading = true;
+
         // Get the current route name using Vue Router
         const route = useRouter().currentRoute.value.name;
 
@@ -20,6 +25,9 @@ export const useMainStore = defineStore("main", {
         if (this.token) {
           // If a token is available, proceed with verification
           const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+
+          // Access the questions store
+          const questionsStore = useQuestionsStore();
 
           // Send a POST request to verify the token
           fetch(`${apiUrl}/auth/verify`, {
@@ -30,6 +38,31 @@ export const useMainStore = defineStore("main", {
             .then((data) => {
               // If verification is successful, update session status and username
               if (data.success && data.valid) {
+                // If there is no category, fetch it from open trivia database
+                if (
+                  questionsStore.categoryList.length === 1 &&
+                  questionsStore.categorysId.length === 1
+                ) {
+                  fetch("https://opentdb.com/api_category.php")
+                    .then((res) => res.json())
+                    .then((data) => {
+                      let categorysId = [];
+                      let categorysName = [];
+
+                      // Separate the  name and id for better display
+                      data.trivia_categories.forEach((c) => {
+                        categorysId.push(c.id);
+                        categorysName.push(c.name);
+                      });
+
+                      // Store separated data on questions
+                      questionsStore.categoryList =
+                        questionsStore.categoryList.concat(categorysName);
+                      questionsStore.categorysId = categorysId;
+                    })
+                    .catch((err) => console.log("error:", err))
+                    .finally(() => (this.loading = false));
+                }
                 this.sessionValid = true;
                 this.username = data.username;
                 navigateTo("/app");

@@ -8,8 +8,8 @@ export const useQuestionsStore = defineStore("questions", {
       difficulty: "Any Difficulty",
       type: "Any Type",
     },
-    categoryList: [],
-    categorysId: [],
+    categoryList: ["Any Category"],
+    categorysId: [0],
     difficultyList: ["Any Difficulty", "Easy", "Medium", "Hard"],
     typeList: ["Any Type", "Multiple Choice", "True / False"],
     snackbar: {
