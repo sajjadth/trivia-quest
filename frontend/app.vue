@@ -1,5 +1,6 @@
 <template>
-  <NuxtLayout>
+  <loading v-if="store.loading" />
+  <NuxtLayout v-else>
     <NuxtPage />
   </NuxtLayout>
 </template>
