@@ -14,7 +14,7 @@ export const useMainStore = defineStore("main", {
     // Define an action named 'verifyTokenAndGetUsername'
     verifyTokenAndGetUsername() {
       // Verify session if session is not valid
-      if (!this.sessionValid) {
+      if (!this.sessionValid && this.token) {
         // Start loading
         this.loading = true;
 
