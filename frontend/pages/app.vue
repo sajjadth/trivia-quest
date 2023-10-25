@@ -1,18 +1,18 @@
 <template>
   <!-- Main container -->
   <div id="container">
-     <!-- Main content area -->
+    <!-- Main content area -->
     <div
       id="main"
       class="d-flex flex-column align-center justify-center w-100 h-100"
     >
-    <!-- Card containing question options -->
+      <!-- Card containing question options -->
       <v-card id="select-card" class="rounded-xl">
         <!-- Card title -->
         <v-card-title>
           <h1 class="text-h4 white-space-normal">Question Type Selector</h1>
         </v-card-title>
-         <!-- Card subtitle -->
+        <!-- Card subtitle -->
         <v-card-subtitle>
           <p class="text-subtitle-1">Customize Your Trivia Experience</p>
         </v-card-subtitle>
@@ -29,32 +29,28 @@
             ]"
             label="Number of Questions:"
             variant="outlined"
+            v-model="questions.info.amount"
           ></v-text-field>
           <!-- Dropdown for selecting category -->
           <v-select
             label="Select Category:"
-            :items="[
-              'Any Category',
-              'California',
-              'Colorado',
-              'Florida',
-              'Georgia',
-              'Texas',
-              'Wyoming',
-            ]"
+            :items="questions.categoryList"
             variant="outlined"
+            v-model="questions.info.category"
           ></v-select>
           <!-- Dropdown for selecting difficulty -->
           <v-select
             label="Select Difficulty:"
-            :items="['Any Difficulty', 'Easy', 'Medium', 'Hard']"
+            :items="questions.difficultyList"
             variant="outlined"
+            v-model="questions.info.difficulty"
           ></v-select>
           <!-- Dropdown for selecting question type -->
           <v-select
             label="Select Type:"
-            :items="['Any Type', 'Multiple Chois', 'True/False']"
+            :items="questions.typeList"
             variant="outlined"
+            v-model="questions.info.type"
           ></v-select>
         </v-card-text>
         <v-card-actions>
@@ -66,20 +62,23 @@
 </template>
 
 <script>
+import { useQuestionsStore } from "~/store/questions";
 import { useMainStore } from "../store/index";
 export default {
   setup() {
     // Access the main store using Composition API
     const store = useMainStore();
-    return { store: store };
+    // Access the questions store using Composition API
+    const questions = useQuestionsStore();
+    return { store: store, questions: questions };
   },
   mounted() {
     // When the component is mounted, verify token and get username
-    this.store.verifyTokenAndGetUsername();
+    this.store.handleGameRouteChange();
   },
   beforeRouteLeave() {
     // Prevent route change, if token exist and token is valid
-    this.store.verifyTokenAndGetUsername();
+    this.store.handleGameRouteChange();
   },
 };
 </script>
@@ -89,7 +88,7 @@ export default {
   white-space: normal
 #select-card
   padding: 20px
-  width: 500px 
+  width: 500px
   @media (max-width: $small-screen)
     width: 95%
 
