@@ -58,7 +58,8 @@ export const useMainStore = defineStore("main", {
                       // Store separated data on questions
                       questionsStore.categoryList =
                         questionsStore.categoryList.concat(categorysName);
-                      questionsStore.categorysId = categorysId;
+                      questionsStore.categorysId =
+                        questionsStore.categorysId.concat(categorysId);
                     })
                     .catch((err) => console.log("error:", err))
                     .finally(() => (this.loading = false));
