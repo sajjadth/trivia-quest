@@ -20,7 +20,7 @@ func getOpenTriviaUrl(amount, category int, difficulty, questinoType string) str
 		url = fmt.Sprintf("%v&amount=%v", url, 10)
 	}
 	if category != 0 {
-		url = fmt.Sprintf("%v&category=&%v", url, category)
+		url = fmt.Sprintf("%v&category=%v", url, category)
 	}
 	if difficulty != "" {
 		url = fmt.Sprintf("%v&difficulty=%v", url, difficulty)
