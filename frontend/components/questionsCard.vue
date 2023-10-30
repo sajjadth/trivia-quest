@@ -1,7 +1,8 @@
 <template>
   <div class="d-flex flex-column align-center justify-center" id="main">
-     <!-- A container div with flexbox properties -->
+    <!-- A container div with flexbox properties -->
     <v-card
+      variant="elevated"
       v-for="(question, index) in questions.data"
       :loading="questions.loading"
       class="rounded-xl question-card d-flex flex-column align-start justify-space-between"
@@ -11,9 +12,9 @@
     >
       <!-- Card subtitle -->
       <v-card-subtitle>
-         <!-- Subtitle section within the card -->
+        <!-- Subtitle section within the card -->
         <v-tooltip location="top" text="Category">
-           <!-- Tooltip for displaying category information -->
+          <!-- Tooltip for displaying category information -->
           <template v-slot:activator="{ props }">
             <!-- Slot for tooltip activator -->
             <v-chip v-bind="props" class="about-question" color="info">
@@ -22,7 +23,7 @@
             </v-chip>
           </template>
         </v-tooltip>
-         <!-- Tooltip for displaying difficulty information -->
+        <!-- Tooltip for displaying difficulty information -->
         <v-tooltip location="top" text="Difficulty">
           <template v-slot:activator="{ props }">
             <!-- Slot for tooltip activator -->
@@ -37,7 +38,7 @@
                   : 'error'
               "
             >
-            <!-- A chip component displaying the question difficulty -->
+              <!-- A chip component displaying the question difficulty -->
               {{ question.difficulty }}
             </v-chip>
           </template>
@@ -45,15 +46,15 @@
       </v-card-subtitle>
       <!-- Card title -->
       <v-card-title>
-      <!-- Title section within the card -->
+        <!-- Title section within the card -->
         <h1 class="text-h6 white-space-normal">
-                  <!-- Heading element displaying the decoded HTML question -->
+          <!-- Heading element displaying the decoded HTML question -->
           {{ decodeHtml(question.question) }}
         </h1>
       </v-card-title>
       <!-- Card content -->
       <v-card-item class="w-100 d-flex flex-row align-center justify-center">
-         <!-- Item section within the card, for displaying options -->
+        <!-- Item section within the card, for displaying options -->
         <v-chip-group selected-class="text-info" column>
           <!-- A group of chips for displaying options -->
           <v-chip
@@ -62,7 +63,7 @@
             :key="option"
             :id="'option-' + i"
           >
-          <!-- Individual chip for an option -->
+            <!-- Individual chip for an option -->
             {{ decodeHtml(option) }}
           </v-chip>
         </v-chip-group>
@@ -72,7 +73,7 @@
         <v-btn block variant="tonal">Check</v-btn>
         <!-- A button for checking the answer -->
         <!-- <v-btn block variant="tonal">Next</v-btn> -->
-         <!-- A commented-out button for moving to the next question -->
+        <!-- A commented-out button for moving to the next question -->
       </v-card-actions>
     </v-card>
   </div>
@@ -112,12 +113,18 @@ export default {
     padding: 20px
     height: fit-content
     position: fixed
-    // z-index: 10
     top: 0
     left: 0
     right: 0
     bottom: 0
     margin: auto
+    &:nth-child(even)
+      transform: rotate(7.5deg) translateY(-7.5px)
+    &:nth-child(odd)
+      transform: rotate(-7.5deg) translateY(-7.5px)
+    &:last-child
+      transform: none !important
+
     .about-question
       margin: 5px
 </style>
