@@ -75,7 +75,12 @@
         </v-window-item>
 
         <!-- Step 1  main questions(game)-->
-        <v-window-item :value="1"> </v-window-item>
+        <v-window-item
+          class="w-100 h-100 d-flex flex-column align-center justify-center"
+          :value="1"
+        >
+          <QuestionsCard />
+        </v-window-item>
       </v-window>
     </div>
   </div>
