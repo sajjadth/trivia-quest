@@ -4,10 +4,10 @@
     <v-card
       variant="elevated"
       v-for="(question, index) in questions.data"
-      :loading="questions.loading"
-      :disabled="questions.loading"
+      :loading="index === questions.data.length - 1 && questions.loading"
+      :disabled="index !== questions.data.length - 1 || questions.loading"
       class="rounded-xl question-card d-flex flex-column align-start justify-space-between"
-      :title="`Question #${questions.data.length - index}`"
+      :title="`Question #${questions.info.amount - questions.data.length + 1}`"
       prepend-icon="mdi-help"
       width="500px"
     >
@@ -66,7 +66,7 @@
             filter
             v-for="(option, i) in question.options"
             :key="option"
-            :id="'option-' + i"
+            :id="`option-${questions.data.length - index}${i}`"
           >
             <!-- Individual chip for an option -->
             {{ decodeHtml(option) }}
@@ -86,7 +86,12 @@
           Check
         </v-btn>
         <!-- A button for moving to the next question -->
-        <v-btn v-else block variant="tonal" :loading="questions.loading">
+        <v-btn
+          v-else
+          block
+          variant="tonal"
+          :loading="questions.loading"
+        >
           Next
         </v-btn>
       </v-card-actions>
