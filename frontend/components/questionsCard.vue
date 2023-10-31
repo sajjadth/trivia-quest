@@ -55,7 +55,11 @@
       <!-- Card content -->
       <v-card-item class="w-100 d-flex flex-row align-center justify-center">
         <!-- Item section within the card, for displaying options -->
-        <v-chip-group selected-class="text-info" column>
+        <v-chip-group
+          v-model="questions.user.answer"
+          selected-class="text-info"
+          column
+        >
           <!-- A group of chips for displaying options -->
           <v-chip
             filter
@@ -70,10 +74,16 @@
       </v-card-item>
       <!-- Actions section within the card -->
       <v-card-actions class="w-100">
-        <v-btn block variant="tonal">Check</v-btn>
         <!-- A button for checking the answer -->
-        <!-- <v-btn block variant="tonal">Next</v-btn> -->
-        <!-- A commented-out button for moving to the next question -->
+        <v-btn
+          v-if="!questions.user.answerChecked"
+          block
+          variant="tonal"
+          @click="questions.check"
+          >Check</v-btn
+        >
+        <!-- A button for moving to the next question -->
+        <v-btn v-else block variant="tonal">Next</v-btn>
       </v-card-actions>
     </v-card>
   </div>

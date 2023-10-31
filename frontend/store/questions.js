@@ -10,6 +10,10 @@ export const useQuestionsStore = defineStore("questions", {
       difficulty: "Any Difficulty",
       type: "Any Type",
     },
+    user: {
+      answer: null,
+      answerChecked: false,
+    },
     data: [],
     categoryList: ["Any Category"],
     categorysId: [0],
@@ -69,6 +73,23 @@ export const useQuestionsStore = defineStore("questions", {
         })
         .catch((err) => console.log("error:", err)) // Log any errors to the console
         .finally(() => (this.loading = false)); // Set loading back to false after request is complete
+    },
+    // 'check' action to check user answer with the correct answer by calling api
+    check() {
+      // check the user answer if there is a input
+      if (this.user.answer) {
+        this.loading = true;
+        // user answer
+        const userAnswer =
+          this.data[this.data.length - 1].options[this.user.answer];
+        // correct answer
+        const correctAnswer = this.data[this.data.length - 1].correct_answer;
+        this.user.answerChecked = true;
+        console.log(userAnswer, correctAnswer);
+      } else {
+        // show error if there is no input and user trying to check
+        this.openSnackbar("Please select an option before checking.", "error");
+      }
     },
     // 'openSnackbar' action to show a snackbar message
     openSnackbar(message, color) {
