@@ -9,6 +9,11 @@ export const useMainStore = defineStore("main", {
     username: null,
     sessionValid: false,
     loading: false,
+    snackbar: {
+      stat: false,
+      message: "",
+      color: "",
+    },
   }),
   actions: {
     // Define an action named 'verifyTokenAndGetUsername'
@@ -88,6 +93,18 @@ export const useMainStore = defineStore("main", {
       if (this.sessionValid && this.token) {
         navigateTo("/app");
       }
+    },
+    // 'openSnackbar' action to show a snackbar message
+    openSnackbar(message, color) {
+      this.snackbar.color = color;
+      this.snackbar.message = message;
+      this.snackbar.stat = true;
+    },
+    // 'closeSnackbar' action to close the snackbar
+    closeSnackbar() {
+      this.snackbar.stat = false;
+      this.snackbar.message = "";
+      this.snackbar.color = "";
     },
   },
 });

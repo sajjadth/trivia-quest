@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useMainStore } from ".";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -49,16 +50,14 @@ export const useUserStore = defineStore("user", {
         );
       },
     },
-    snackbar: {
-      stat: false,
-      message: "",
-      color: "",
-    },
     loading: false,
   }),
   actions: {
     // login user
     handleLoginUser() {
+      // Access the main store
+      const mainStore = useMainStore();
+
       this.loading = true;
       const apiUrl = useRuntimeConfig().public.API_BASE_URL;
 
@@ -72,9 +71,9 @@ export const useUserStore = defineStore("user", {
         .then((res) => res.json())
         .then((data) => {
           if (!data.success) {
-            this.openSnackbar(data.error, "error");
+            mainStore.openSnackbar(data.error, "error");
           } else {
-            this.openSnackbar(
+            mainStore.openSnackbar(
               data.message,
               data.need_confirmation ? "warning" : "success"
             );
@@ -96,6 +95,7 @@ export const useUserStore = defineStore("user", {
     },
     // register user
     handleRegisterUser() {
+      const mainSotre = useMainStore();
       // Destructure properties from this.info and this.rules for easier access
       const { passwordConfirm } = this.info;
       const { email, minCounter, maxCounter, password, username } = this.rules;
@@ -130,9 +130,9 @@ export const useUserStore = defineStore("user", {
           .then((res) => res.json())
           .then((data) => {
             if (!data.success) {
-              this.openSnackbar(data.error, "error");
+              mainSotre.openSnackbar(data.error, "error");
             } else {
-              this.openSnackbar(data.message, "success");
+              mainSotre.openSnackbar(data.message, "success");
               this.step++;
             }
           })
@@ -141,7 +141,7 @@ export const useUserStore = defineStore("user", {
             this.loading = false;
           });
       } else {
-        this.openSnackbar(
+        mainSotre.openSnackbar(
           "Oops! It seems you missed a few fields. Please complete all required inputs.",
           "error"
         );
@@ -149,6 +149,9 @@ export const useUserStore = defineStore("user", {
     },
     // verify user with verification code sended to user email
     verifyUser() {
+      // Access the main store
+      const mainStore = useMainStore();
+
       const apiUrl = useRuntimeConfig().public.API_BASE_URL;
       this.loading = true;
       fetch(`${apiUrl}/auth/email/verify`, {
@@ -161,7 +164,7 @@ export const useUserStore = defineStore("user", {
         .then((res) => res.json())
         .then((data) => {
           if (!data.success) {
-            this.openSnackbar(data.error, "error");
+            mainStore.openSnackbar(data.error, "error");
           } else {
             this.step++;
             if (this.info.rememberMe) localStorage.setItem("token", data.token);
@@ -210,6 +213,9 @@ export const useUserStore = defineStore("user", {
     },
     // Send new verrification code to email
     sendEmailAgain() {
+      // Access the main storev
+      const mainStore = useMainStore();
+
       const apiUrl = useRuntimeConfig().public.API_BASE_URL;
       this.loading = true;
       fetch(`${apiUrl}/auth/email/send`, {
@@ -218,21 +224,11 @@ export const useUserStore = defineStore("user", {
       })
         .then((res) => res.json())
         .then((data) => {
-          this.openSnackbar("New code sent. Check your inbox!", "success");
+          mainStore.openSnackbar("New code sent. Check your inbox!", "success");
           this.startTimer();
         })
         .catch((err) => console.log("error:", err))
         .finally(() => (this.loading = false));
-    },
-    openSnackbar(message, color) {
-      this.snackbar.color = color;
-      this.snackbar.message = message;
-      this.snackbar.stat = true;
-    },
-    closeSnackbar() {
-      this.snackbar.stat = false;
-      this.snackbar.color = "";
-      this.snackbar.message = "";
     },
   },
   getters: {

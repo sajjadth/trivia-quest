@@ -19,11 +19,6 @@ export const useQuestionsStore = defineStore("questions", {
     categorysId: [0],
     difficultyList: ["Any Difficulty", "Easy", "Medium", "Hard"],
     typeList: ["Any Type", "Multiple Choice", "True / False"],
-    snackbar: {
-      stat: false,
-      message: "",
-      color: "",
-    },
     loading: false,
   }),
   actions: {
@@ -64,7 +59,7 @@ export const useQuestionsStore = defineStore("questions", {
         .then((data) => {
           if (!data.success) {
             // Open a snackbar with error message if request is not successful
-            this.openSnackbar(data.error, "error");
+            mainStore.openSnackbar(data.error, "error");
           } else {
             // Set the fetched questions in the data property and increment the step to start game
             this.data = data.results;
@@ -76,6 +71,9 @@ export const useQuestionsStore = defineStore("questions", {
     },
     // 'check' action to check user answer with the correct answer by calling api
     check() {
+      // Access the main store
+      const mainStore = useMainStore();
+
       // check the user answer if there is a input
       if (this.user.answer) {
         this.loading = true;
@@ -88,20 +86,11 @@ export const useQuestionsStore = defineStore("questions", {
         console.log(userAnswer, correctAnswer);
       } else {
         // show error if there is no input and user trying to check
-        this.openSnackbar("Please select an option before checking.", "error");
+        mainStore.openSnackbar(
+          "Please select an option before checking.",
+          "error"
+        );
       }
-    },
-    // 'openSnackbar' action to show a snackbar message
-    openSnackbar(message, color) {
-      this.snackbar.color = color;
-      this.snackbar.message = message;
-      this.snackbar.stat = true;
-    },
-    // 'closeSnackbar' action to close the snackbar
-    closeSnackbar() {
-      this.snackbar.stat = false;
-      this.snackbar.color = "";
-      this.snackbar.message = "";
     },
   },
 });
