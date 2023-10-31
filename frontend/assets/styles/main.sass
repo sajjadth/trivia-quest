@@ -23,6 +23,21 @@
     font-style: italic
     font-display: swap
 
+// Define a keyframe animation for correct next question animation
+@keyframes next-question-correct-animation
+    0%
+        translate: 0 0
+    100%
+        rotate: 45deg
+        translate: 200vh -100px
+
+// Define a keyframe animation for incorrect next question animation
+@keyframes next-question-incorrect-animation
+    0%
+        translate: 0 0
+    100%
+        rotate: -45deg
+        translate: -200vh -100px
 body
     color: $color-paragraph !important
     background: $color-background !important
@@ -30,6 +45,18 @@ body
     font-family: "Roboto" ,system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
     h1,h2,h3,h4,h5,h6
         color: $color-headline !important
+
+    // Apply the correct animation to elements with class 'next-question-card-correct-animation'
+    .next-question-card-correct-animation
+        animation-name: next-question-correct-animation
+        animation-duration: 750ms
+        animation-fill-mode: forwards
+
+    // Apply the incorrect animation to elements with class 'next-question-card-incorrect-animation'
+    .next-question-card-incorrect-animation
+        animation-name: next-question-incorrect-animation
+        animation-duration: 750ms
+        animation-fill-mode: forwards
 
     // Temporary fix for Nuxt.js loading indicator bug (remove once fixed in Nuxt.js)
     .nuxt-loading-indicator
