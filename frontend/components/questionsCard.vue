@@ -5,6 +5,7 @@
       variant="elevated"
       v-for="(question, index) in questions.data"
       :loading="questions.loading"
+      :disabled="questions.loading"
       class="rounded-xl question-card d-flex flex-column align-start justify-space-between"
       :title="`Question #${questions.data.length - index}`"
       prepend-icon="mdi-help"
@@ -80,10 +81,14 @@
           block
           variant="tonal"
           @click="questions.check"
-          >Check</v-btn
+          :loading="questions.loading"
         >
+          Check
+        </v-btn>
         <!-- A button for moving to the next question -->
-        <v-btn v-else block variant="tonal">Next</v-btn>
+        <v-btn v-else block variant="tonal" :loading="questions.loading">
+          Next
+        </v-btn>
       </v-card-actions>
     </v-card>
   </div>

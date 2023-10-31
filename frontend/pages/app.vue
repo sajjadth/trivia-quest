@@ -13,6 +13,7 @@
           <!-- Card containing question options -->
           <v-card
             :loading="questions.loading"
+            :disabled="questions.loading"
             id="select-card"
             class="rounded-xl"
           >
