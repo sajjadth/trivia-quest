@@ -13,6 +13,7 @@ export const useQuestionsStore = defineStore("questions", {
     user: {
       answer: null,
       answerChecked: false,
+      correctAnswers: 0,
     },
     data: [],
     categoryList: ["Any Category"],
@@ -112,7 +113,11 @@ export const useQuestionsStore = defineStore("questions", {
               selectedOption.classList.remove("text-info");
 
               // if the user answer is same as correct answer add text-success class
-              if (data.result) selectedOption.classList.add("text-success");
+              // and increase the correct answer by one
+              if (data.result) {
+                selectedOption.classList.add("text-success");
+                this.user.correctAnswers++;
+              }
               // if the user answer is not the same as correct answer add text-error class
               else selectedOption.classList.add("text-error");
 
