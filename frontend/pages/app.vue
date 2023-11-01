@@ -116,7 +116,8 @@ export default {
   padding: 20px
   width: 500px
   @media (max-width: $small-screen)
-    width: 95%
+    width: fit-content
+    margin: 10px
 
 #container
   padding: 0 10px 10px 10px
