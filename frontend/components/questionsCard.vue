@@ -1,5 +1,39 @@
 <template>
   <div class="d-flex flex-column align-center justify-center" id="main">
+    <!-- Display a card when there are no more questions and the step is 1 (indicating completion) -->
+    <v-card
+      v-if="questions.data.length === 0 && questions.step === 1"
+      id="result-card"
+      class="rounded-xl d-flex flex-column align-start justify-space-between"
+      title="Done"
+      prepend-icon="mdi-check-all"
+    >
+      <!-- Card item for displaying completion message -->
+      <v-card-item class="w-100">
+        <!-- Header message for completion -->
+        <h1 class="text-h5 text-center">
+          Congratulations!<br />You've completed the trivia questions.
+        </h1>
+        <!-- Display user's correct answers out of total questions -->
+        <p class="text-h6 text-center">
+          You answered {{ questions.user.correctAnswers }} out of
+          {{ questions.info.amount }} question.
+        </p>
+      </v-card-item>
+
+      <!-- Card actions section (buttons) -->
+      <v-card-actions class="w-100">
+        <!-- button to go back to the start lobby -->
+        <v-btn
+          block
+          variant="tonal"
+          @click="questions.backToQuest"
+          :loading="questions.loading"
+        >
+          Back to Quest
+        </v-btn>
+      </v-card-actions>
+    </v-card>
     <!-- A container div with flexbox properties -->
     <v-card
       variant="elevated"
@@ -129,6 +163,12 @@ export default {
   z-index: 0
   width: 600px
   height: 600px
+  #result-card
+    width: 600px
+    height: 400px
+    padding: 20px
+    p
+      margin: 20px
   .question-card
     width: 600px !important
     height: 400px !important
