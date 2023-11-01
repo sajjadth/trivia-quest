@@ -159,7 +159,7 @@ export default {
 .white-space-normal
     white-space: normal
 #main
-  position: relative
+  position: relative !important
   z-index: 0
   width: 600px
   height: 600px
@@ -167,6 +167,9 @@ export default {
     width: 600px
     height: 400px
     padding: 20px
+    @media (max-width:$medium-screen)
+      width: 90% !important
+      height: fit-content !important
     p
       margin: 20px
   .question-card
@@ -187,6 +190,13 @@ export default {
       transform: rotate(-7.5deg) translateY(-7.5px)
     &:last-child
       transform: none !important
+    @media (max-width:$medium-screen)
+      width: 90% !important
+      height: 70% !important
+      &:nth-child(even)
+        transform: rotate(5deg) translateY(-5px)
+      &:nth-child(odd)
+        transform: rotate(-5deg) translateY(-5px)
 
     .about-question
       margin: 5px
