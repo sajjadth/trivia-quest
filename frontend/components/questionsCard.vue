@@ -4,6 +4,7 @@
     <v-card
       variant="elevated"
       v-for="(question, index) in questions.data"
+      :id="`question-${questions.data.length - index}`"
       :loading="index === questions.data.length - 1 && questions.loading"
       :disabled="index !== questions.data.length - 1 || questions.loading"
       class="rounded-xl question-card d-flex flex-column align-start justify-space-between"
@@ -91,6 +92,7 @@
           block
           variant="tonal"
           :loading="questions.loading"
+          @click="questions.next"
         >
           Next
         </v-btn>
@@ -138,6 +140,7 @@ export default {
     right: 0
     bottom: 0
     margin: auto
+    transition: all 0.25s ease
     &:nth-child(even)
       transform: rotate(7.5deg) translateY(-7.5px)
     &:nth-child(odd)
