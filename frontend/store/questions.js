@@ -130,5 +130,29 @@ export const useQuestionsStore = defineStore("questions", {
         );
       }
     },
+    // 'next' action to transition to the next question
+    next() {
+      // Get the last question card element
+      const lastCard = document.getElementById(`question-1`);
+
+      // Check if the user's answer is correct by checking CSS class
+      const isUserAnswerCorrect = document
+        .getElementById(`option-1${this.user.answer}`)
+        .classList.contains("text-success");
+
+      // Apply animation based on correctness of user's answer
+      if (isUserAnswerCorrect)
+        lastCard.classList.add("next-question-card-correct-animation");
+      else lastCard.classList.add("next-question-card-incorrect-animation");
+
+      // Reset user's answer and answerChecked status
+      this.user.answer = null;
+      this.user.answerChecked = false;
+
+      // Remove the last question card after animation is complete
+      setTimeout(() => {
+        this.data.pop();
+      }, 375);
+    },
   },
 });
