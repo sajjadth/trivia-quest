@@ -159,5 +159,9 @@ export const useQuestionsStore = defineStore("questions", {
         this.data.pop();
       }, 375);
     },
+    // 'backToQuest' action reset the store
+    backToQuest() {
+      this.$reset();
+    },
   },
 });
