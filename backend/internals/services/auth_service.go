@@ -32,7 +32,7 @@ func RegisterUser(user *models.User) error {
 
 	// insert user in to database and send error if user already exist
 	_, err := db.Exec(
-		`INSERT INTO users (username, email, password, created_at) VALUES(?, ?, ?, NOW());`,
+		`INSERT INTO users(username, email, password, created_at) VALUES(?, ?, ?, NOW());`,
 		user.Username,
 		user.Email,
 		user.Password,
