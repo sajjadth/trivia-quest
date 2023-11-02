@@ -41,7 +41,7 @@ export const useQuestionsStore = defineStore("questions", {
           token: mainStore.token, // Include the token from main store in the request headers
         },
         body: JSON.stringify({
-          amount: this.info.amount,
+          amount: Number(this.info.amount),
           category:
             this.categorysId[this.categoryList.indexOf(this.info.category)],
           difficulty:
