@@ -48,7 +48,7 @@ export const useQuestionsStore = defineStore("questions", {
             this.info.difficulty === "Any Difficulty"
               ? ""
               : this.info.difficulty.toLocaleLowerCase(), // Convert difficulty to lowercase if not "Any Difficulty"
-          type:
+          question_type:
             this.info.type === "Multiple Choice"
               ? "multiple"
               : this.info.type === "True / False"
@@ -78,7 +78,7 @@ export const useQuestionsStore = defineStore("questions", {
       const apiUrl = useRuntimeConfig().public.API_BASE_URL;
 
       // check the user answer if there is a input
-      if (this.user.answer) {
+      if (this.user.answer !== null) {
         //change the state of loading
         this.loading = true;
 
