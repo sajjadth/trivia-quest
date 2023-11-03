@@ -207,3 +207,24 @@ func SendPasswordResetEmail(c *gin.Context) {
 	// if the email was sent successfully, respond with a success status and a message
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": res})
 }
+
+func VerifyAndChangePassword(c *gin.Context) {
+	// Parse the incoming JSON request into a 'user' struct
+	var user models.User
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		// respond with an error message if there is an issue with JSON binding
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err})
+		return
+	}
+
+	// verify and changes password and handler any possible error
+	err := services.VerifyAndChangePassword(user.TemporaryKey, user.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err})
+		return
+	}
+
+	// send success message
+	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Password updated successfully!"})
+}
