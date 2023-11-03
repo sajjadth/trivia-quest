@@ -8,4 +8,5 @@ type User struct {
 	CreatedAt        string `json:"createdAt"`
 	VerificationCode string `json:"verification_code"`
 	Token            string `json:"token"`
+	TemporaryKey     string `json:"tmp_key"`
 }
