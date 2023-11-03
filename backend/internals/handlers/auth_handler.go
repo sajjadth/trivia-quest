@@ -195,7 +195,7 @@ func SendPasswordResetEmail(c *gin.Context) {
 	}
 
 	// call a service to send a password reset email
-	res, err := services.SendPasswordResetEmail(user.Email)
+	err := services.SendPasswordResetEmail(user.Email)
 
 	// respond based on the result of sending the email
 	if err != nil {
@@ -205,7 +205,7 @@ func SendPasswordResetEmail(c *gin.Context) {
 	}
 
 	// if the email was sent successfully, respond with a success status and a message
-	c.JSON(http.StatusOK, gin.H{"success": true, "message": res})
+	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Password reset link sent successfully! Please check your inbox."})
 }
 
 func VerifyAndChangePassword(c *gin.Context) {
@@ -226,5 +226,5 @@ func VerifyAndChangePassword(c *gin.Context) {
 	}
 
 	// send success message
-	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Password updated successfully!"})
+	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Your password has been successfully updated."})
 }

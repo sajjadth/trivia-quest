@@ -237,7 +237,7 @@ func VerifyUser(token string) (bool, string) {
 	return tokens.Validate(token)
 }
 
-func SendPasswordResetEmail(email string) (string, error) {
+func SendPasswordResetEmail(email string) error {
 	var userExists bool
 	var result map[string]interface{}
 
@@ -248,26 +248,26 @@ func SendPasswordResetEmail(email string) (string, error) {
 	err := db.QueryRow("SELECT EXISTS(SELECT id FROM users WHERE email = ?);", email).Scan(&userExists)
 	if err != nil {
 		log.Println(err)
-		return "", fmt.Errorf("something went wrong please try again later")
+		return fmt.Errorf("something went wrong please try again later")
 	}
 
 	// send and error if user not exists in database
 	if !userExists {
-		return "", fmt.Errorf("sorry, we couldn't find an account associated with that email address please double-check and try again")
+		return fmt.Errorf("sorry, we couldn't find an account associated with that email address please double-check and try again")
 	}
 
 	// generate temporary key for changing password
 	tmpKey, err := generateTempKey()
 	if err != nil {
 		log.Println(err)
-		return "", fmt.Errorf("something went wrong please try again later")
+		return fmt.Errorf("something went wrong please try again later")
 	}
 
 	// set temporary key to database
 	_, err = db.Exec("UPDATE users SET reset_key = ? WHERE email = ?;", tmpKey, email)
 	if err != nil {
 		log.Println(err)
-		return "", fmt.Errorf("something went wrong please try again later")
+		return fmt.Errorf("something went wrong please try again later")
 	}
 
 	// get frontend address from environment variables
@@ -292,38 +292,34 @@ func SendPasswordResetEmail(email string) (string, error) {
 	res, err := http.Get(emailUrl)
 	if err != nil {
 		log.Println(err)
-		return "", fmt.Errorf("something went wrong please try again later")
+		return fmt.Errorf("something went wrong please try again later")
 	}
 
 	// get data fromt res.Body
 	err = json.NewDecoder(res.Body).Decode(&result)
 	if err != nil {
-		return "", fmt.Errorf("something went wrong please try again later")
+		return fmt.Errorf("something went wrong please try again later")
 	}
 
 	// return error if email didn't send
 	if !result["success"].(bool) {
 		log.Println(result["error"])
-		return "", fmt.Errorf("something went wrong please try again later")
+		return fmt.Errorf("something went wrong please try again later")
 	}
 
 	// return success message
-	return "Your password has been successfully updated.", nil
+	return nil
 }
 
 func VerifyAndChangePassword(tmpKey, newPassword string) error {
 	// encrypt new password fot storing in database
-	encryptedPassword, err := Encrypt(newPassword)
-	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("something went wrong please try again later")
-	}
+	encryptedPassword := auth.HashPassword(newPassword)
 
 	// get database
 	db := config.GetDB()
 
 	// set the new encrypted password in users table and delete reset_key fromt table
-	_, err = db.Exec("UPDATE users SET password = ?, reset_key = null WHERE reset_key = ?;", encryptedPassword, tmpKey)
+	_, err := db.Exec("UPDATE users SET password = ?, reset_key = null WHERE reset_key = ?;", encryptedPassword, tmpKey)
 	if err != nil {
 		log.Println(err)
 		return fmt.Errorf("something went wrong please try again later")
