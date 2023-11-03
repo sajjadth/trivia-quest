@@ -310,3 +310,24 @@ func SendPasswordResetEmail(email string) (string, error) {
 	// return success message
 	return "Your password has been successfully updated.", nil
 }
+
+func VerifyAndChangePassword(tmpKey, newPassword string) error {
+	// encrypt new password fot storing in database
+	encryptedPassword, err := Encrypt(newPassword)
+	if err != nil {
+		log.Println(err)
+		return fmt.Errorf("something went wrong please try again later")
+	}
+
+	// get database
+	db := config.GetDB()
+
+	// set the new encrypted password in users table and delete reset_key fromt table
+	_, err = db.Exec("UPDATE users SET password = ?, reset_key = null WHERE reset_key = ?;", encryptedPassword, tmpKey)
+	if err != nil {
+		log.Println(err)
+		return fmt.Errorf("something went wrong please try again later")
+	}
+
+	return nil
+}
