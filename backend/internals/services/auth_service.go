@@ -368,3 +368,45 @@ func UpdatePasswordWithToken(password, newPassword, token string) error {
 
 	return nil
 }
+
+func UpdateEmail(newEmail, username, password string) error {
+	var hashedPassword string
+
+	// get database
+	db := config.GetDB()
+
+	// get hashed password from database
+	err := db.QueryRow("SELECT password FROM users WHERE username = ?;", username).Scan(&hashedPassword)
+	if err != nil {
+		return fmt.Errorf("something went wrong please try again later")
+	}
+
+	// check if password is valid
+	passwordIsValid := auth.VerifyPassword(password, hashedPassword)
+	if !passwordIsValid {
+		return fmt.Errorf("invalid password. Please try again")
+	}
+
+	// creating verification code for verifying email
+	verificationCode := getVerificationCode()
+
+	// update the email in database
+	_, err = db.Exec(`
+		UPDATE users u
+		JOIN verification_attempts va
+		ON u.id = va.user_id
+		SET u.email = ?, va.verification_code = ?, va.created_at = '2012-12-12 12:12:12'
+		WHERE u.username = ?;
+		`, newEmail, verificationCode, username)
+	fmt.Println(1010, err)
+	if err != nil {
+		return fmt.Errorf("invalid password. Please try again")
+	}
+
+	_, err = SendConfirmationEmail(newEmail, verificationCode)
+	if err != nil {
+		return fmt.Errorf("something went wrong please try again later")
+	}
+
+	return nil
+}
