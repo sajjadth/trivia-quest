@@ -248,3 +248,23 @@ func UpdatePasswordWithToken(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Your password has been successfully updated."})
 }
+
+func UpdateEmail(c *gin.Context) {
+	// Parse the incoming JSON request into a 'user' struct
+	var user models.User
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		// respond with an error message if there is an issue with JSON binding
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err})
+		return
+	}
+
+	// change the email and handle any possible error
+	err := services.UpdateEmail(user.Email, user.Username, user.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Your email has been successfully updated."})
+}
