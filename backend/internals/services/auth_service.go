@@ -327,3 +327,44 @@ func VerifyAndChangePassword(tmpKey, newPassword string) error {
 
 	return nil
 }
+
+func UpdatePasswordWithToken(password, newPassword, token string) error {
+	var oldHashedPassword string
+
+	// validate the seassion and get username form it
+	valid, username := tokens.Validate(token)
+
+	// if seassion is not valid return an error
+	if !valid {
+		return fmt.Errorf("seassion is not valid")
+	}
+
+	// get database
+	db := config.GetDB()
+
+	// get the old hashed password from database
+	err := db.QueryRow("SELECT password FROM users WHERE username = ?;", username).Scan(&oldHashedPassword)
+	if err != nil {
+		log.Println(err)
+		return fmt.Errorf("something went wrong please try again later")
+	}
+
+	// check if password is valid
+	passwordIsValid := auth.VerifyPassword(password, oldHashedPassword)
+
+	if !passwordIsValid {
+		return fmt.Errorf("invalid password. Please try again")
+	}
+
+	// hash new password
+	newHashedPassword := auth.HashPassword(newPassword)
+
+	// update password with new hashed password
+	_, err = db.Exec("UPDATE users SET password = ? WHERE username = ?;", newHashedPassword, username)
+	if err != nil {
+		log.Println(err)
+		return fmt.Errorf("something went wrong please try again later")
+	}
+
+	return nil
+}
