@@ -13,5 +13,6 @@ func SetupAuthRoutes(router *gin.RouterGroup) {
 		auth.POST("/login", handlers.Login)
 		auth.POST("/email/send", handlers.SendConfirmationEmail)
 		auth.POST("/email/verify", handlers.VerifyEmail)
+		auth.POST("/password/reset", handlers.SendPasswordResetEmail)
 	}
 }
