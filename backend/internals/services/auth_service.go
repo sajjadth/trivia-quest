@@ -1,6 +1,8 @@
 package services
 
 import (
+	ra "crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -21,6 +23,22 @@ func getVerificationCode() string {
 
 	// Format the verification code as a six-digit string
 	return fmt.Sprintf("%06d", code)
+}
+
+// generateTempKey generates a random 16-byte temporary key
+// and returns it as a hexadecimal string.
+func generateTempKey() (string, error) {
+	// Generate 16 random bytes
+	bytes := make([]byte, 16)
+	_, err := ra.Read(bytes)
+	if err != nil {
+		return "", err
+	}
+
+	// Convert bytes to a hexadecimal string
+	tempKey := hex.EncodeToString(bytes)
+
+	return tempKey, nil
 }
 
 func RegisterUser(user *models.User) error {
@@ -217,4 +235,78 @@ func EmailVerification(email string, code string) (string, error) {
 
 func VerifyUser(token string) (bool, string) {
 	return tokens.Validate(token)
+}
+
+func SendPasswordResetEmail(email string) (string, error) {
+	var userExists bool
+	var result map[string]interface{}
+
+	// get database
+	db := config.GetDB()
+
+	// check if users exists in database
+	err := db.QueryRow("SELECT EXISTS(SELECT id FROM users WHERE email = ?);", email).Scan(&userExists)
+	if err != nil {
+		log.Println(err)
+		return "", fmt.Errorf("something went wrong please try again later")
+	}
+
+	// send and error if user not exists in database
+	if !userExists {
+		return "", fmt.Errorf("sorry, we couldn't find an account associated with that email address please double-check and try again")
+	}
+
+	// generate temporary key for changing password
+	tmpKey, err := generateTempKey()
+	if err != nil {
+		log.Println(err)
+		return "", fmt.Errorf("something went wrong please try again later")
+	}
+
+	// set temporary key to database
+	_, err = db.Exec("UPDATE users SET reset_key = ? WHERE email = ?;", tmpKey, email)
+	if err != nil {
+		log.Println(err)
+		return "", fmt.Errorf("something went wrong please try again later")
+	}
+
+	// get frontend address from environment variables
+	frontendAddress := os.Getenv("FRONTEND_ADDRESS")
+
+	// link for changing the password
+	link := fmt.Sprintf("%s/reset-password?tmpkey=%s", frontendAddress, tmpKey)
+
+	// get api key and sender from .env
+	emailApiKey := os.Getenv("EMAIL_API_KEY")
+	emailSender := os.Getenv("EMAIL_SENDER")
+
+	// url for sending confirmation email
+	emailUrl := fmt.Sprintf(
+		"https://api.elasticemail.com/v2/email/send?apikey=%v&msgTo=%v&from=%v&subject=Password%%20Reset&template=forgot-password-trivia-quest-main&merge_link=%s",
+		emailApiKey,
+		email,
+		emailSender,
+		link)
+
+	// send password change email
+	res, err := http.Get(emailUrl)
+	if err != nil {
+		log.Println(err)
+		return "", fmt.Errorf("something went wrong please try again later")
+	}
+
+	// get data fromt res.Body
+	err = json.NewDecoder(res.Body).Decode(&result)
+	if err != nil {
+		return "", fmt.Errorf("something went wrong please try again later")
+	}
+
+	// return error if email didn't send
+	if !result["success"].(bool) {
+		log.Println(result["error"])
+		return "", fmt.Errorf("something went wrong please try again later")
+	}
+
+	// return success message
+	return "Your password has been successfully updated.", nil
 }
