@@ -143,8 +143,10 @@ func VerifyEmail(c *gin.Context) {
 }
 
 func VerifyUser(c *gin.Context) {
+	// parse the incoming JSON request into a 'user' struct
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
+		// respond with an error message if there is an issue with JSON binding
 		c.JSON(
 			http.StatusBadRequest,
 			gin.H{
@@ -154,8 +156,13 @@ func VerifyUser(c *gin.Context) {
 			})
 		return
 	}
+
+	// verify the user token using a service method
 	isValid, username := services.VerifyUser(user.Token)
+
+	// respond based on the verification result
 	if !isValid {
+		// if the token is not valid or expired, respond with an unauthorized status
 		c.JSON(
 			http.StatusUnauthorized,
 			gin.H{
@@ -165,6 +172,8 @@ func VerifyUser(c *gin.Context) {
 			})
 		return
 	}
+
+	// if user is successfully verified, respond with success status and username
 	c.JSON(
 		http.StatusOK,
 		gin.H{
@@ -176,18 +185,25 @@ func VerifyUser(c *gin.Context) {
 }
 
 func SendPasswordResetEmail(c *gin.Context) {
+	// Parse the incoming JSON request into a 'user' struct
 	var user models.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
+		// respond with an error message if there is an issue with JSON binding
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "something went wrong please try again later"})
 		return
 	}
 
+	// call a service to send a password reset email
 	res, err := services.SendPasswordResetEmail(user.Email)
+
+	// respond based on the result of sending the email
 	if err != nil {
+		// if there is an error while sending the email, respond with an internal server error status
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err})
 		return
 	}
 
+	// if the email was sent successfully, respond with a success status and a message
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": res})
 }
