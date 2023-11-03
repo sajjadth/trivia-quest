@@ -219,7 +219,7 @@ func VerifyAndChangePassword(c *gin.Context) {
 	}
 
 	// verify and changes password and handler any possible error
-	err := services.VerifyAndChangePassword(user.TemporaryKey, user.Password)
+	err := services.VerifyAndChangePassword(user.TemporaryKey, user.NewPassword)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err})
 		return
