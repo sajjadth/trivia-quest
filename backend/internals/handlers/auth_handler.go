@@ -174,3 +174,20 @@ func VerifyUser(c *gin.Context) {
 			"valid":    true,
 		})
 }
+
+func SendPasswordResetEmail(c *gin.Context) {
+	var user models.User
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "something went wrong please try again later"})
+		return
+	}
+
+	res, err := services.SendPasswordResetEmail(user.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "message": res})
+}
