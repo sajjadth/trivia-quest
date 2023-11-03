@@ -9,4 +9,5 @@ type User struct {
 	VerificationCode string `json:"verification_code"`
 	Token            string `json:"token"`
 	TemporaryKey     string `json:"tmp_key"`
+	NewPassword      string `json:"new_password"`
 }
