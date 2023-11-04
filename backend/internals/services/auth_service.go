@@ -274,7 +274,7 @@ func SendPasswordResetEmail(email string) error {
 	frontendAddress := os.Getenv("FRONTEND_ADDRESS")
 
 	// link for changing the password
-	link := fmt.Sprintf("%s/reset-password?tmpkey=%s", frontendAddress, tmpKey)
+	link := fmt.Sprintf("%s/password/reset?tmpkey=%s", frontendAddress, tmpKey)
 
 	// get api key and sender from .env
 	emailApiKey := os.Getenv("EMAIL_API_KEY")
