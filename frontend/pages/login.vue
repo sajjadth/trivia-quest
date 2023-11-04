@@ -63,10 +63,10 @@
 
               <!-- Card subtitle for step 0 -->
               <v-card-subtitle>
-                <!-- "Forgot Password?" functionality is pending. Currently disabled. -->
+                <!-- send to /forgot-password -->
                 <p class="text-center">
-                  <NuxtLink to="/login">
-                    <v-btn disabled variant="plain"> Forgot password? </v-btn>
+                  <NuxtLink to="/password/forgot">
+                    <v-btn variant="plain"> Forgot password? </v-btn>
                   </NuxtLink>
                 </p>
                 <!-- Legal information links -->
