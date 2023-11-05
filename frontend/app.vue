@@ -27,8 +27,5 @@ export default {
     const store = useMainStore();
     return { store: store };
   },
-  mounted() {
-    this.store.verifyTokenAndGetUsername();
-  },
 };
 </script>

@@ -98,14 +98,6 @@ export default {
     const questions = useQuestionsStore();
     return { store: store, questions: questions };
   },
-  mounted() {
-    // When the component is mounted, verify token and get username
-    this.store.handleGameRouteChange();
-  },
-  beforeRouteLeave() {
-    // Prevent route change, if token exist and token is valid
-    this.store.handleGameRouteChange();
-  },
 };
 </script>
 

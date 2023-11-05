@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { useQuestionsStore } from "./questions";
 
 export const useMainStore = defineStore("main", {
   state: () => ({
@@ -16,89 +15,6 @@ export const useMainStore = defineStore("main", {
     },
   }),
   actions: {
-    // Define an action named 'verifyTokenAndGetUsername'
-    verifyTokenAndGetUsername() {
-      // Getting the Current route
-      const route = useRouter().currentRoute.value.name;
-
-      // Start loading
-      this.loading = true;
-
-      // Verify session if session is not valid
-      if (!this.sessionValid && this.token) {
-        // Get the current route name using Vue Router
-        const route = useRouter().currentRoute.value.name;
-
-        // If a token is available, proceed with verification
-        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
-
-        // Access the questions store
-        const questionsStore = useQuestionsStore();
-
-        // Send a POST request to verify the token
-        fetch(`${apiUrl}/auth/verify`, {
-          method: "POST",
-          body: JSON.stringify({ token: this.token }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            // If verification is successful, update session status and username
-            if (data.success && data.valid) {
-              // If there is no category, fetch it from open trivia database
-              if (
-                questionsStore.categoryList.length === 1 &&
-                questionsStore.categorysId.length === 1
-              ) {
-                fetch("https://opentdb.com/api_category.php")
-                  .then((res) => res.json())
-                  .then((data) => {
-                    let categorysId = [];
-                    let categorysName = [];
-
-                    // Separate the  name and id for better display
-                    data.trivia_categories.forEach((c) => {
-                      categorysId.push(c.id);
-                      categorysName.push(c.name);
-                    });
-
-                    // Store separated data on questions
-                    questionsStore.categoryList =
-                      questionsStore.categoryList.concat(categorysName);
-                    questionsStore.categorysId =
-                      questionsStore.categorysId.concat(categorysId);
-                  })
-                  .catch((err) => console.log("error:", err))
-                  .finally(() => (this.loading = false));
-              }
-              this.sessionValid = true;
-              this.username = data.username;
-              navigateTo("/app");
-            } else if (route === "app") {
-              // If the route is '/app' and verification fails, clear storage and redirect to '/login'
-              localStorage.clear();
-              sessionStorage.clear();
-              navigateTo("/login");
-            }
-          })
-          .catch((err) => {
-            console.log("error:", err);
-          });
-      } else {
-        // If no token is available, redirect to '/login'
-        // and then change the state of loading to false
-        if (route === "app")
-          navigateTo("/login").then(() => (this.loading = false));
-      }
-
-      // if the route is not /app and there is no token change the state of loading to falses
-      if (route !== "app" && !this.token) this.loading = false;
-    },
-    // If the user tries to exit the /app, don't allow it
-    handleGameRouteChange() {
-      if (this.sessionValid && this.token) {
-        navigateTo("/app");
-      }
-    },
     // 'openSnackbar' action to show a snackbar message
     openSnackbar(message, color) {
       this.snackbar.color = color;
