@@ -65,7 +65,7 @@
               <v-card-subtitle>
                 <!-- send to /forgot-password -->
                 <p class="text-center">
-                  <NuxtLink to="/password/forgot">
+                  <NuxtLink to="/account/password/forgot">
                     <v-btn variant="plain"> Forgot password? </v-btn>
                   </NuxtLink>
                 </p>
