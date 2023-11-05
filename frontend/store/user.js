@@ -12,7 +12,9 @@ export const useUserStore = defineStore("user", {
       passwordConfirmVisible: false,
       verificationsCode: "",
       rememberMe: false,
+      previousEmail: "",
     },
+    registered: false,
     timer: {
       timer: 300,
       timerInterval: null,
@@ -133,6 +135,7 @@ export const useUserStore = defineStore("user", {
             if (!data.success) {
               mainSotre.openSnackbar(data.error, "error");
             } else {
+              this.registered = true;
               mainSotre.openSnackbar(data.message, "success");
               this.step++;
             }
@@ -192,6 +195,9 @@ export const useUserStore = defineStore("user", {
     },
     // Change step to previous one
     previousStep() {
+      // save email to compare with new email
+      this.info.previousEmail = this.info.email;
+      // change the state of step
       this.step--;
     },
     // Starting timer and stops when timer ends
@@ -314,6 +320,49 @@ export const useUserStore = defineStore("user", {
               setTimeout(() => {
                 navigateTo("/login");
               }, 5000);
+            }
+          })
+          .catch((err) => console.log("error:", err))
+          .finally(() => (this.loading = false));
+      }
+    },
+    updateEmailOnRegister() {
+      // access the main store
+      const mainStore = useMainStore();
+
+      // check if email is not valid show an error
+      if (this.rules.email(this.info.email) != true)
+        mainStore.openSnackbar(this.rules.email(this.info.email), "error");
+      else if (this.info.email === this.info.previousEmail)
+        mainStore.openSnackbar(
+          "New email is the same as the current one.",
+          "error"
+        );
+      else {
+        // get api url from .env
+        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+
+        // change the loading state to true
+        this.loading = true;
+
+        // send a request for updating email
+        fetch(`${apiUrl}/auth/email/update`, {
+          method: "POST",
+          body: JSON.stringify({
+            email: this.info.email,
+            password: this.info.password,
+            username: this.info.username,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            // If the request is not successful, display an error message
+            if (!data.success) mainStore.openSnackbar(data.error, "error");
+            else {
+              // If successful, display a success message and increment the step
+              mainStore.openSnackbar(data.message, "success");
+              this.step++;
+              this.timer.timer = 300;
             }
           })
           .catch((err) => console.log("error:", err))
