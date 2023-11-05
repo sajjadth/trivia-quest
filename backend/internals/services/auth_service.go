@@ -395,7 +395,7 @@ func UpdateEmail(newEmail, username, password string) error {
 		UPDATE users u
 		JOIN verification_attempts va
 		ON u.id = va.user_id
-		SET u.email = ?, va.verification_code = ?, va.created_at = '2012-12-12 12:12:12'
+		SET u.email = ?, va.verification_code = ?, va.created_at = NOW()
 		WHERE u.username = ?;
 		`, newEmail, verificationCode, username)
 	fmt.Println(1010, err)
