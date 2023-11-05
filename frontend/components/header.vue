@@ -35,11 +35,10 @@
                 </div>
                 <!-- Divider -->
                 <v-divider class="my-3"></v-divider>
-                <!--
-                  Edit Account button is currently disabled as there is no
-                  functionality for it in both the front and back end.
-                -->
-                <v-btn variant="plain" disabled> Edit Account </v-btn>
+                <!-- go to /account/profile -->
+                <v-btn to="/account/profile" variant="plain">
+                  Edit Account
+                </v-btn>
                 <!-- Logout button (TODO: Implement functionality) -->
                 <v-btn variant="plain"> LogoUt </v-btn>
               </div>
