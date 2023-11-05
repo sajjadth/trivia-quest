@@ -47,6 +47,7 @@
                 label="Username"
                 placeholder="Adam221"
                 variant="solo"
+                :disabled="store.registered"
                 type="text"
               ></v-text-field>
               <v-text-field
@@ -66,6 +67,7 @@
                 density="compact"
                 placeholder="Enter your password"
                 variant="solo"
+                :disabled="store.registered"
                 @click:append-inner="store.handlePasswordVisibility"
               ></v-text-field>
               <v-text-field
@@ -89,6 +91,7 @@
                 density="compact"
                 placeholder="Confirm your password"
                 variant="solo"
+                :disabled="store.registered"
                 @click:append-inner="store.handlePasswordConfirmVisibility"
               ></v-text-field>
               <!-- Card subtitle for step 0 -->
@@ -191,16 +194,11 @@
 
           <!-- Card actions (buttons) -->
           <v-card-actions>
-            <!--
-                Back button is visible only in step 1.
-                It is currently disabled to allow for the addition 
-                of edit functionality in both the back and front end.
-            -->
+            <!-- Edit button (visible in step 1) -->
             <v-btn
               v-if="store.step === 1"
               variant="text"
               @click="store.previousStep"
-              disabled
             >
               Edit
             </v-btn>
@@ -210,11 +208,17 @@
               color="primary"
               variant="elevated"
               class="flex-grow-1"
-              @click="store.handleRegisterUser"
+              @click="
+                () => {
+                  store.registered
+                    ? store.updateEmailOnRegister() 
+                    : store.handleRegisterUser();
+                }
+              "
               type="submit"
               :loading="store.loading"
             >
-              Register
+              {{ store.registered ? "Update" : "Register" }}
               <!-- Submit button (visible in step 1) -->
             </v-btn>
             <v-btn
@@ -306,8 +310,8 @@ export default {
     // Start timer when step is 1
     if (this.store.step === 1) this.store.startTimer();
   },
-  unmounted(){
-    this.store.$reset()
-  }
+  unmounted() {
+    this.store.$reset();
+  },
 };
 </script>
