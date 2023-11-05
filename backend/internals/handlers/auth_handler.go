@@ -200,7 +200,7 @@ func SendPasswordResetEmail(c *gin.Context) {
 	// respond based on the result of sending the email
 	if err != nil {
 		// if there is an error while sending the email, respond with an internal server error status
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
@@ -214,14 +214,14 @@ func VerifyAndChangePassword(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		// respond with an error message if there is an issue with JSON binding
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
 	// verify and changes password and handler any possible error
 	err := services.VerifyAndChangePassword(user.TemporaryKey, user.NewPassword)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
@@ -235,14 +235,14 @@ func UpdatePasswordWithToken(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		// respond with an error message if there is an issue with JSON binding
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
 	// update password with new password and handle any possible error
 	err := services.UpdatePasswordWithToken(user.Password, user.NewPassword, user.Token)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
@@ -255,14 +255,14 @@ func UpdateEmail(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		// respond with an error message if there is an issue with JSON binding
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
 	// change the email and handle any possible error
 	err := services.UpdateEmail(user.Email, user.Username, user.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
