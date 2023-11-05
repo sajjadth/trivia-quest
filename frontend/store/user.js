@@ -98,7 +98,7 @@ export const useUserStore = defineStore("user", {
     },
     // register user
     handleRegisterUser() {
-      const mainSotre = useMainStore();
+      const mainStore = useMainStore();
       // Destructure properties from this.info and this.rules for easier access
       const { passwordConfirm } = this.info;
       const { email, minCounter, maxCounter, password, username } = this.rules;
@@ -133,10 +133,10 @@ export const useUserStore = defineStore("user", {
           .then((res) => res.json())
           .then((data) => {
             if (!data.success) {
-              mainSotre.openSnackbar(data.error, "error");
+              mainStore.openSnackbar(data.error, "error");
             } else {
               this.registered = true;
-              mainSotre.openSnackbar(data.message, "success");
+              mainStore.openSnackbar(data.message, "success");
               this.step++;
             }
           })
@@ -145,7 +145,7 @@ export const useUserStore = defineStore("user", {
             this.loading = false;
           });
       } else {
-        mainSotre.openSnackbar(
+        mainStore.openSnackbar(
           "Oops! It seems you missed a few fields. Please complete all required inputs.",
           "error"
         );
