@@ -410,3 +410,36 @@ func UpdateEmail(newEmail, username, password string) error {
 
 	return nil
 }
+
+func GetUserInfo(username string) (models.User, error) {
+	var user models.User
+
+	// get database
+	db := config.GetDB()
+
+	// get user info from database
+	err := db.QueryRow(`
+		SELECT 
+			subquery.place,
+			subquery.email,
+			subquery.score
+		FROM (
+			SELECT 
+				ROW_NUMBER() OVER(ORDER BY s.score DESC) AS place,
+				u.email,
+				u.username,
+				s.score
+			FROM users u
+			JOIN scores s
+			ON u.id = s.user_id
+			ORDER BY s.score DESC
+		) AS subquery
+		WHERE subquery.username = ?;
+	`, username).Scan(&user.Place, &user.Email, &user.Score)
+	if err != nil {
+		log.Println(err)
+		return user, fmt.Errorf("something went wrong please try again later")
+	}
+
+	return user, nil
+}
