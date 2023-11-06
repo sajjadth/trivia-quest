@@ -39,8 +39,10 @@
                 <v-btn to="/account/profile" variant="plain">
                   Edit Account
                 </v-btn>
-                <!-- Logout button (TODO: Implement functionality) -->
-                <v-btn variant="plain"> LogoUt </v-btn>
+                <!-- Logout button-->
+                <v-btn @click="userStore.logoutHandler" variant="plain">
+                  LogoUt
+                </v-btn>
               </div>
             </v-card-text>
           </v-card>
@@ -91,11 +93,13 @@
 </style>
 
 <script>
-import { useMainStore } from "../store/index";
+import { useMainStore } from "~/store/index";
+import { useUserStore } from "~/store/user";
 export default {
   setup() {
     const store = useMainStore();
-    return { store: store };
+    const userStore = useUserStore();
+    return { store: store, userStore: userStore };
   },
   computed: {
     // Determine login button variant based on current route

@@ -369,6 +369,12 @@ export const useUserStore = defineStore("user", {
           .finally(() => (this.loading = false));
       }
     },
+    // 'logoutHandler' clears the token and redirect user to index page
+    logoutHandler() {
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+      reloadNuxtApp({ path: "/" });
+    },
   },
   getters: {
     // Parsing time to display it properly in the DOM
