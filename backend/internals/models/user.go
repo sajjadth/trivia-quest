@@ -10,4 +10,6 @@ type User struct {
 	Token            string `json:"token"`
 	TemporaryKey     string `json:"tmp_key"`
 	NewPassword      string `json:"new_password"`
+	Score            int    `json:"score"`
+	Place            int    `json:"place"`
 }
