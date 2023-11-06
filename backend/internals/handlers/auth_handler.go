@@ -268,3 +268,30 @@ func UpdateEmail(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Your email has been successfully updated."})
 }
+
+func GetUserInfo(c *gin.Context) {
+	// Parse the incoming JSON request into a 'user' struct
+	var user models.User
+
+	// get username for accessing to database from extracted token in middleware
+	username, _ := c.Get("username")
+
+	// get user info from database
+	user, err := services.GetUserInfo(username.(string))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	c.JSON(
+		http.StatusOK,
+		gin.H{
+			"success": true,
+			"result": gin.H{
+				"username": username,
+				"email":    user.Email,
+				"place":    user.Place,
+				"score":    user.Score,
+			},
+		})
+}
