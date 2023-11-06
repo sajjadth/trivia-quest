@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sajjadth/trivia-quest/internals/handlers"
+	"github.com/sajjadth/trivia-quest/internals/middlewares"
 )
 
 func SetupAuthRoutes(router *gin.RouterGroup) {
@@ -17,5 +18,6 @@ func SetupAuthRoutes(router *gin.RouterGroup) {
 		auth.POST("/password/reset", handlers.SendPasswordResetEmail)
 		auth.POST("/password/change", handlers.VerifyAndChangePassword)
 		auth.POST("/password/update", handlers.UpdatePasswordWithToken)
+		auth.GET("/profile", middlewares.AuthMiddleware(), handlers.GetUserInfo)
 	}
 }
