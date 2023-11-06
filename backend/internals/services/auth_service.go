@@ -328,16 +328,8 @@ func VerifyAndChangePassword(tmpKey, newPassword string) error {
 	return nil
 }
 
-func UpdatePasswordWithToken(password, newPassword, token string) error {
+func UpdatePasswordWithToken(password, newPassword, username string) error {
 	var oldHashedPassword string
-
-	// validate the seassion and get username form it
-	valid, username := tokens.Validate(token)
-
-	// if seassion is not valid return an error
-	if !valid {
-		return fmt.Errorf("seassion is not valid")
-	}
 
 	// get database
 	db := config.GetDB()

@@ -239,8 +239,10 @@ func UpdatePasswordWithToken(c *gin.Context) {
 		return
 	}
 
+	username, _ := c.Get("username")
+
 	// update password with new password and handle any possible error
-	err := services.UpdatePasswordWithToken(user.Password, user.NewPassword, user.Token)
+	err := services.UpdatePasswordWithToken(user.Password, user.NewPassword, username.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
