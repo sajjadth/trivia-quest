@@ -13,6 +13,8 @@ export const useUserStore = defineStore("user", {
       verificationsCode: "",
       rememberMe: false,
       previousEmail: "",
+      score: 0,
+      place: 0,
     },
     registered: false,
     timer: {
@@ -375,6 +377,36 @@ export const useUserStore = defineStore("user", {
       sessionStorage.removeItem("token");
       reloadNuxtApp({ path: "/" });
     },
+    // 'getUserProfile' gets user info from database
+    getUserProfile() {
+      // Access the main store
+      const mainStore = useMainStore();
+
+      // get api url from .env
+      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+
+      // Change the loading state to true
+      this.loading = true;
+
+      // get usre info from database
+      fetch(`${apiUrl}/auth/profile`, {
+        method: "GET",
+        headers: {
+          token: mainStore.token,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            this.info.username = data.result.username;
+            this.info.email = data.result.email;
+            this.info.place = data.result.place;
+            this.info.score = data.result.score;
+          }
+        })
+        .catch((err) => console.log("error:", err))
+        .finally((this.loading = false));
+    },
   },
   getters: {
     // Parsing time to display it properly in the DOM
@@ -413,6 +445,23 @@ export const useUserStore = defineStore("user", {
     },
     getPercentageOfTimer: (state) => {
       return state.timer.timer / 3;
+    },
+    userPlaceInOrdinalForm() {
+      const p = this.info.place;
+
+      // Check if the number is between 10 and 20 (inclusive), as they have irregular ordinal forms.
+      if (10 <= p % 100 && p % 100 <= 20) {
+        return p + "th";
+      } else {
+        // Define ordinal suffixes for 1, 2, and 3.
+        const suffixes = { 1: "st", 2: "nd", 3: "rd" };
+
+        // Get the last digit of the number.
+        const lastDigit = p % 10;
+
+        // Use the suffixes object to check for special ordinal forms. Default to "th" if not found.
+        return p + (suffixes[lastDigit] || "th");
+      }
     },
   },
 });
