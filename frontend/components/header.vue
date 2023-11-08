@@ -1,11 +1,17 @@
 <template>
   <!-- Header container -->
-  <div id="header">
+  <div id="header" class="w-100 d-flex align-center justify-center">
     <!-- Main content section -->
-    <div id="main">
+    <div
+      id="main"
+      class="w-100 h-100 d-flex flex-row align-center justify-space-between"
+    >
       <!-- Site title linking to home -->
       <NuxtLink id="title" to="/">
-        <h3>Trivia Quest</h3>
+        <div class="d-flex flex-row align-center justify-center">
+          <div id="title-icon"></div>
+          <h3 id="title-text">Trivia Quest</h3>
+        </div>
       </NuxtLink>
       <div>
         <!-- User menu (visible when session is valid) -->
@@ -49,13 +55,28 @@
         </v-menu>
 
         <!-- Login and Register links (visible when session is not valid) -->
-        <div id="links" v-else>
-          <NuxtLink to="/login">
-            <v-btn :variant="handleLoginButtonVariant"> login </v-btn>
-          </NuxtLink>
-          <NuxtLink to="/register">
-            <v-btn :variant="handleRegisterButtonVariant"> register </v-btn>
-          </NuxtLink>
+        <div
+          id="links"
+          class="d-flex flex-row align-center justify-space-between"
+          v-else
+        >
+          <v-btn
+            color="primary"
+            :variant="handleLoginButtonVariant"
+            to="/login"
+            rounded="lg"
+          >
+            login
+          </v-btn>
+
+          <v-btn
+            color="primary"
+            :variant="handleRegisterButtonVariant"
+            to="/register"
+            rounded="lg"
+          >
+            register
+          </v-btn>
         </div>
       </div>
     </div>
@@ -67,29 +88,25 @@
   > *
     margin: 5px !important
 #header
-  width: 100%
   height: 10%
   background: transparent
-  display: flex
-  align-items: center
-  justify-content: center
   padding: 10px
   #main
-    width: 100%
-    height: 100%
     border-radius: 22.5px / 22.5px
-    display: flex
-    flex-direction: row
-    align-items: center
-    justify-content: space-between
     padding: 20px
   #title
     text-decoration: none
+    &-text
+      display: block
+      @media (max-width: $small-screen)
+        display: none
+    &-icon
+      width: 36px !important
+      height: 36px !important
+      background: url("/favicon.ico") no-repeat center
+      background-size: contain
   #links
     width: 200px
-    display: flex
-    align-items: center
-    justify-content: space-between
 </style>
 
 <script>
