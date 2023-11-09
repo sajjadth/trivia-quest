@@ -346,10 +346,6 @@ export default {
   components: {
     VOtpInput,
   },
-  updated() {
-    // Start timer when step is 1
-    if (this.store.step === 1) this.store.startTimer();
-  },
   unmounted() {
     this.store.$reset();
   },

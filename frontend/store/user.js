@@ -86,6 +86,7 @@ export const useUserStore = defineStore("user", {
             );
             if (data.need_confirmation) {
               this.step++;
+              this.startTimer();
             } else {
               this.step = 2;
               if (this.info.rememberMe)
@@ -142,6 +143,7 @@ export const useUserStore = defineStore("user", {
               this.registered = true;
               mainStore.openSnackbar(data.message, "success");
               this.step++;
+              this.startTimer();
             }
           })
           .catch((err) => console.log("err", err))
@@ -207,6 +209,9 @@ export const useUserStore = defineStore("user", {
       this.info.previousEmail = this.info.email;
       // change the state of step
       this.step--;
+      // stop timer
+      this.timer.timer = 300
+      this.stopTimer();
     },
     // Starting timer and stops when timer ends
     startTimer() {
