@@ -248,7 +248,7 @@
               <!-- Submit button (visible in step 1) -->
               <v-btn
                 rounded="lg"
-                color="primary"
+                color="info"
                 variant="elevated"
                 class="flex-grow-1"
                 @click="store.verifyUser"

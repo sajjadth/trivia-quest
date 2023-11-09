@@ -85,7 +85,7 @@
               ></v-text-field>
 
               <v-checkbox
-                color="primary"
+                color="info"
                 v-model="store.info.rememberMe"
                 label="Remember me"
               ></v-checkbox>
@@ -203,7 +203,7 @@
               <!-- Submit button (visible in step 1) -->
               <v-btn
                 rounded="lg"
-                color="primary"
+                color="info"
                 variant="elevated"
                 class="flex-grow-1"
                 @click="store.verifyUser"
