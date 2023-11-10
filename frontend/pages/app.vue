@@ -102,8 +102,6 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-.white-space-normal
-  white-space: normal
 #select-card
   padding: 20px
   width: 500px

@@ -147,8 +147,6 @@
 </template>
 
 <style lang="sass" scoped>
-.text-justify
-  text-align: justify !important
 #main
   width: 100%
   height: 100%

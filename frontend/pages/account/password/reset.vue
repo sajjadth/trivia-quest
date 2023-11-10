@@ -150,8 +150,6 @@ export default {
 </script>
 
 <style scoped lang="sass">
-.text-field
-  margin-bottom: 5px
 .divider-p-4
     margin-inline: 20px
 #reset-password-main-window

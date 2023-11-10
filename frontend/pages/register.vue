@@ -283,10 +283,6 @@
 </template>
 
 <style lang="sass" scoped>
-.text-field
-  margin-bottom: 10px
-.white-space-normal
-  white-space: normal
 #main
   padding: 0 30px 30px 30px
   @media (max-width: $medium-screen)
