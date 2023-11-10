@@ -26,7 +26,9 @@
         <!-- button to go back to the start lobby -->
         <v-btn
           block
-          variant="tonal"
+          variant="flat"
+          color="info"
+          rounded="lg"
           @click="questions.backToQuest"
           :loading="questions.loading"
         >
@@ -46,42 +48,41 @@
       prepend-icon="mdi-help"
       width="500px"
     >
-      <!-- Card subtitle -->
-      <v-card-subtitle>
-        <!-- Subtitle section within the card -->
-        <v-tooltip location="top" text="Category">
-          <!-- Tooltip for displaying category information -->
-          <template v-slot:activator="{ props }">
-            <!-- Slot for tooltip activator -->
-            <v-chip v-bind="props" class="about-question" color="info">
-              <!-- A chip component displaying the question category -->
-              {{ question.category }}
-            </v-chip>
-          </template>
-        </v-tooltip>
-        <!-- Tooltip for displaying difficulty information -->
-        <v-tooltip location="top" text="Difficulty">
-          <template v-slot:activator="{ props }">
-            <!-- Slot for tooltip activator -->
-            <v-chip
-              v-bind="props"
-              class="about-question"
-              :color="
-                question.difficulty === 'easy'
-                  ? 'success'
-                  : question.difficulty === 'medium'
-                  ? 'warning'
-                  : 'error'
-              "
-            >
-              <!-- A chip component displaying the question difficulty -->
-              {{ question.difficulty }}
-            </v-chip>
-          </template>
-        </v-tooltip>
-      </v-card-subtitle>
       <!-- Card title -->
       <v-card-title>
+        <div id="subject">
+          <!-- Subtitle section within the card -->
+          <v-tooltip location="top" text="Category">
+            <!-- Tooltip for displaying category information -->
+            <template v-slot:activator="{ props }">
+              <!-- Slot for tooltip activator -->
+              <v-chip v-bind="props" class="about-question" color="info">
+                <!-- A chip component displaying the question category -->
+                {{ question.category }}
+              </v-chip>
+            </template>
+          </v-tooltip>
+          <!-- Tooltip for displaying difficulty information -->
+          <v-tooltip location="top" text="Difficulty">
+            <template v-slot:activator="{ props }">
+              <!-- Slot for tooltip activator -->
+              <v-chip
+                v-bind="props"
+                class="about-question"
+                :color="
+                  question.difficulty === 'easy'
+                    ? 'success'
+                    : question.difficulty === 'medium'
+                    ? 'warning'
+                    : 'error'
+                "
+              >
+                <!-- A chip component displaying the question difficulty -->
+                {{ question.difficulty }}
+              </v-chip>
+            </template>
+          </v-tooltip>
+        </div>
         <!-- Title section within the card -->
         <h1 class="text-h6 white-space-normal">
           <!-- Heading element displaying the decoded HTML question -->
@@ -114,9 +115,11 @@
         <v-btn
           v-if="!questions.user.answerChecked"
           block
-          variant="tonal"
+          variant="flat"
+          rounded="lg"
           @click="questions.check"
           :loading="questions.loading"
+          color="info"
         >
           Check
         </v-btn>
@@ -124,9 +127,11 @@
         <v-btn
           v-else
           block
-          variant="tonal"
+          variant="flat"
+          rounded="lg"
           :loading="questions.loading"
           @click="questions.next"
+          color="info"
         >
           Next
         </v-btn>
@@ -156,13 +161,16 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-.white-space-normal
-    white-space: normal
 #main
   position: relative !important
   z-index: 0
   width: 600px
   height: 600px
+  .v-card
+    padding: 28px 20px
+    border: 1px #333333 solid
+    #subject
+      margin-bottom: 10px
   #result-card
     width: 600px
     height: 400px
