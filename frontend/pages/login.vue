@@ -51,7 +51,7 @@
               <v-text-field
                 class="text-field w-100"
                 rounded="lg"
-                variant="filled"
+                variant="underlined"
                 v-model="store.info.email"
                 :rules="[
                   store.rules.email,
@@ -66,7 +66,7 @@
               <v-text-field
                 class="text-field w-100"
                 rounded="lg"
-                variant="filled"
+                variant="underlined"
                 :rules="[
                   store.rules.required,
                   store.rules.maxCounter,
@@ -154,7 +154,7 @@
                 <v-card-text>
                   <VOtpInput
                     v-model="store.info.verificationsCode"
-                    variant="filled"
+                    variant="underlined"
                     length="6"
                     type="number"
                   ></VOtpInput>

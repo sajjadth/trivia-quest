@@ -60,7 +60,7 @@
                 ]"
                 label="Email"
                 placeholder="example@domain.com"
-                variant="filled"
+                variant="underlined"
                 rounded="lg"
                 type="email"
               />
@@ -75,7 +75,7 @@
                 ]"
                 label="Username"
                 placeholder="Adam221"
-                variant="filled"
+                variant="underlined"
                 rounded="lg"
                 :disabled="store.registered"
                 type="text"
@@ -96,7 +96,7 @@
                 :type="store.info.passwordVisible ? 'text' : 'password'"
                 density="compact"
                 placeholder="Enter your password"
-                variant="filled"
+                variant="underlined"
                 rounded="lg"
                 :disabled="store.registered"
                 @click:append-inner="store.handlePasswordVisibility"
@@ -121,7 +121,7 @@
                 :type="store.info.passwordConfirmVisible ? 'text' : 'password'"
                 density="compact"
                 placeholder="Confirm your password"
-                variant="filled"
+                variant="underlined"
                 rounded="lg"
                 :disabled="store.registered"
                 @click:append-inner="store.handlePasswordConfirmVisibility"
@@ -199,7 +199,7 @@
                 <v-card-text>
                   <VOtpInput
                     v-model="store.info.verificationsCode"
-                    variant="filled"
+                    variant="underlined"
                     length="6"
                     type="number"
                   ></VOtpInput>
