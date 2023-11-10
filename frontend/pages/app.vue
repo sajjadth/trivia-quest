@@ -25,8 +25,6 @@
             <v-card-subtitle>
               <p class="text-subtitle-1">Customize Your Trivia Experience</p>
             </v-card-subtitle>
-            <!-- Divider line -->
-            <v-divider />
             <!-- Card content -->
             <v-card-text>
               <!-- Input field for number of questions -->
@@ -37,28 +35,33 @@
                   (value) => Number(value) <= 20 || 'Should be less than 21',
                 ]"
                 label="Number of Questions:"
-                variant="outlined"
+                variant="underlined"
+                rounded="lg"
                 v-model="questions.info.amount"
               ></v-text-field>
               <!-- Dropdown for selecting category -->
               <v-select
                 label="Select Category:"
                 :items="questions.categoryList"
-                variant="outlined"
+                variant="underlined"
+                rounded="lg"
                 v-model="questions.info.category"
+                class="text-field"
               ></v-select>
               <!-- Dropdown for selecting difficulty -->
               <v-select
                 label="Select Difficulty:"
                 :items="questions.difficultyList"
-                variant="outlined"
+                variant="underlined"
+                rounded="lg"
                 v-model="questions.info.difficulty"
               ></v-select>
               <!-- Dropdown for selecting question type -->
               <v-select
                 label="Select Type:"
                 :items="questions.typeList"
-                variant="outlined"
+                variant="underlined"
+                rounded="lg"
                 v-model="questions.info.type"
               ></v-select>
             </v-card-text>
@@ -67,10 +70,13 @@
                 :disabled="questions.loading"
                 :loading="questions.loading"
                 block
-                variant="tonal"
+                variant="flat"
+                rounded="lg"
+                color="info"
                 @click="questions.start"
-                >Start</v-btn
               >
+                Start
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-window-item>
@@ -117,4 +123,7 @@ export default {
     border-radius: 20px
     background: url("../assets/images/background-pattern.svg")
     background-position: center
+    .v-card
+      padding: 28px 20px
+      border: 1px #333333 solid
 </style>
