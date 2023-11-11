@@ -2,7 +2,12 @@
   <!-- Main container with centered content -->
   <v-container class="h-100 d-flex flex-column align-center justify-center">
     <!-- Card -->
-    <v-card :loading="store.loading" :disabled="store.loading" class="mx-auto">
+    <v-card
+      :loading="store.loading"
+      :disabled="store.loading"
+      class="mx-auto"
+      rounded="xl"
+    >
       <!-- Window component for handling steps -->
       <v-window id="reset-password-main-window" v-model="store.step">
         <!-- Step 0: password update -->
@@ -45,7 +50,7 @@
               :type="store.info.oldPasswordVisible ? 'text' : 'password'"
               density="compact"
               placeholder="Enter your old password"
-              variant="outlined"
+              variant="underlined"
               @click:append-inner="store.handleOldPasswordVisibility"
             ></v-text-field>
             <v-text-field
@@ -64,7 +69,7 @@
               :type="store.info.passwordVisible ? 'text' : 'password'"
               density="compact"
               placeholder="Enter your new password"
-              variant="outlined"
+              variant="underlined"
               @click:append-inner="store.handlePasswordVisibility"
             ></v-text-field>
             <v-text-field
@@ -87,10 +92,11 @@
               :type="store.info.passwordConfirmVisible ? 'text' : 'password'"
               density="compact"
               placeholder="Confirm your new password"
-              variant="outlined"
+              variant="underlined"
               @click:append-inner="store.handlePasswordConfirmVisibility"
             ></v-text-field>
-
+          </v-card-text>
+          <v-card-actions>
             <!-- Button to update password -->
             <v-btn
               block
@@ -99,10 +105,11 @@
               color="info"
               variant="elevated"
               @click="store.handlePasswordUpdate"
+              rounded="lg"
             >
               Update Password
             </v-btn>
-          </v-card-text>
+          </v-card-actions>
         </v-window-item>
 
         <!-- Step 1: show congratulations when password reseted successfully -->
@@ -115,11 +122,9 @@
               Password Reset Successful
             </h3>
             <p class="text-caption text-grey">
-              Congratulations! Your password has been successfully updated.
-              <br />
-              You can now use your new password for accessing this account
-              <br />
-              Now you will be redirected to the game lobby.
+              Congratulations! Your password has been successfully updated. You
+              can now use your new password for accessing this account Now you
+              will be redirected to the game lobby.
             </p>
           </div>
         </v-window-item>
@@ -149,9 +154,11 @@ export default {
 <style scoped lang="sass">
 .divider-p-4
     margin-inline: 20px
+
 #reset-password-main-window
     width: 500px
-    padding: 25px
+    padding: 28px 20px
+    border: 1px #333333 solid
     height: fit-content
     @media (max-width: $small-screen)
       padding: 5px
