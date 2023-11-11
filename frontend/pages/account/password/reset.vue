@@ -2,7 +2,12 @@
   <!-- Main container with centered content -->
   <v-container class="h-100 d-flex flex-column align-center justify-center">
     <!-- Card -->
-    <v-card :loading="store.loading" :disabled="store.loading" class="mx-auto">
+    <v-card
+      rounded="xl"
+      :loading="store.loading"
+      :disabled="store.loading"
+      class="mx-auto"
+    >
       <!-- Window component for handling steps -->
       <v-window id="reset-password-main-window" v-model="store.step">
         <!-- Step 0: password reset -->
@@ -46,7 +51,7 @@
               :type="store.info.passwordVisible ? 'text' : 'password'"
               density="compact"
               placeholder="Enter your password"
-              variant="outlined"
+              variant="underlined"
               @click:append-inner="store.handlePasswordVisibility"
             ></v-text-field>
             <v-text-field
@@ -69,7 +74,7 @@
               :type="store.info.passwordConfirmVisible ? 'text' : 'password'"
               density="compact"
               placeholder="Confirm your password"
-              variant="outlined"
+              variant="underlined"
               @click:append-inner="store.handlePasswordConfirmVisibility"
             ></v-text-field>
 
@@ -81,30 +86,11 @@
               color="info"
               variant="elevated"
               @click="store.resetPasswordHandler"
+              rounded="lg"
             >
               Reset Password
             </v-btn>
           </v-card-text>
-
-          <!-- Divider and OR message -->
-          <v-card-text class="d-flex flex-row align-center justify-center">
-            <v-divider class="divider-p-4" />
-            <p>OR</p>
-            <v-divider class="divider-p-4" />
-          </v-card-text>
-
-          <!-- Actions: Create new account and Back to login -->
-          <v-card-actions
-            id="password-reset-action"
-            class="d-flex flex-column align-center justify-space-between w-100"
-          >
-            <NuxtLink to="/register">
-              <v-btn variant="plain">Create new account</v-btn>
-            </NuxtLink>
-            <NuxtLink to="/login">
-              <v-btn variant="plain">Back to login</v-btn>
-            </NuxtLink>
-          </v-card-actions>
         </v-window-item>
 
         <!-- Step 1: show congratulations when password reseted successfully -->
@@ -117,11 +103,8 @@
               Password Reset Successful
             </h3>
             <p class="text-caption text-grey">
-              Congratulations! Your password has been successfully reset.
-              <br />
-              You can now regain access to your account using your new
-              credentials
-              <br />
+              Congratulations! Your password has been successfully reset. You
+              can now regain access to your account using your new credentials
               Now you will be redirected to the login.
             </p>
           </div>
@@ -152,6 +135,10 @@ export default {
 <style scoped lang="sass">
 .divider-p-4
     margin-inline: 20px
+.v-container
+  @media (max-width: $medium-screen)
+      padding: 0 10px 10px 10px !important
+
 #reset-password-main-window
     width: 500px
     padding: 25px
