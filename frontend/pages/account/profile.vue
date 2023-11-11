@@ -2,7 +2,7 @@
   <!-- Main container with centered content -->
   <v-container class="h-100 d-flex flex-column align-center justify-center">
     <!-- Card for displaying user profile information -->
-    <v-card id="profile-card">
+    <v-card id="profile-card" rounded="xl">
       <!-- Card title with avatar icon -->
       <v-card-title class="text-center">
         <v-avatar size="150">
@@ -14,7 +14,7 @@
       <v-card-text>
         <!-- Username field -->
         <v-text-field
-          variant="outlined"
+          variant="underlined"
           prepend-inner-icon="mdi-at"
           disabled
           label="Username"
@@ -22,7 +22,7 @@
         />
         <!-- Email field -->
         <v-text-field
-          variant="outlined"
+          variant="underlined"
           prepend-inner-icon="mdi-email-outline"
           disabled
           label="Email"
@@ -34,7 +34,7 @@
           id="score-section"
         >
           <!-- Place information -->
-          <div id="place" class="d-flex align-center justify-center rounded">
+          <div id="place" class="d-flex align-center justify-center rounded-lg">
             <v-icon
               id="place-icon"
               :class="
@@ -59,11 +59,11 @@
               size="x-large"
               class="place-icon mdi mdi-podium"
             ></v-icon>
-            <h1 class="text-h4">{{ store.userPlaceInOrdinalForm }} Place</h1>
+            <h1 class="text-h5">{{ store.userPlaceInOrdinalForm }} Place</h1>
           </div>
 
           <!-- Score information -->
-          <div id="score" class="d-flex align-center justify-center rounded">
+          <div id="score" class="d-flex align-center justify-center rounded-lg">
             <v-icon
               id="score-icon"
               :color="
@@ -78,7 +78,7 @@
               size="x-large"
               class="mdi mdi-star-three-points"
             ></v-icon>
-            <h1 class="text-h4">Score: {{ store.info.score }}</h1>
+            <h1 class="text-h5">Score: {{ store.info.score }}</h1>
           </div>
         </div>
       </v-card-text>
@@ -91,12 +91,15 @@
         <!-- Dialog for logout confirmation -->
         <v-dialog width="500">
           <template v-slot:activator="{ props }">
-            <v-btn variant="text" color="error" v-bind="props">logout</v-btn>
+            <v-btn variant="text" color="error" v-bind="props" rounded="lg"
+              >logout</v-btn
+            >
           </template>
 
           <template v-slot:default="{ isActive }">
-            <v-card title="Logout" prepend-icon="mdi-exit-run">
-              <v-card-text>
+            <v-card rounded="xl">
+              <v-card-text class="d-flex flex-row">
+                <v-icon class="mdi mdi-exit-run icon-margin" />
                 <h1 class="text-h5">Confirm Logout</h1>
               </v-card-text>
               <v-card-text>
@@ -109,19 +112,24 @@
               <v-card-actions
                 class="d-flex flex-row align-center justify-space-around"
               >
-                <v-btn text="Close" @click="isActive.value = false"></v-btn>
+                <v-btn
+                  text="Close"
+                  @click="isActive.value = false"
+                  rounded="lg"
+                />
                 <v-btn
                   text="Confirm"
                   color="error"
                   @click="store.logoutHandler"
-                ></v-btn>
+                  rounded="lg"
+                />
               </v-card-actions>
             </v-card>
           </template>
         </v-dialog>
 
         <!-- Button for editing password -->
-        <v-btn variant="text" to="/account/password/update">
+        <v-btn variant="text" to="/account/password/update" rounded="lg">
           Edit Password
         </v-btn>
       </v-card-actions>
@@ -144,8 +152,14 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-#profile-card
+.icon-margin
+  margin-right: 10px
+.v-card
   width: 500px
+  padding: 28px 20px
+  border: 1px #333333 solid
+  @media (max-width: $medium-screen)
+    padding: 8px 0 !important
   @media (max-width: $small-screen)
     width: 100%
   #score-section
