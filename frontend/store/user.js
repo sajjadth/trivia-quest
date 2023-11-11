@@ -210,7 +210,7 @@ export const useUserStore = defineStore("user", {
       // change the state of step
       this.step--;
       // stop timer
-      this.timer.timer = 300
+      this.timer.timer = 300;
       this.stopTimer();
     },
     // Starting timer and stops when timer ends
@@ -431,6 +431,11 @@ export const useUserStore = defineStore("user", {
       // check if new password and password confirm are match
       else if (this.info.password != this.info.passwordConfirm)
         mainStore.openSnackbar("Passwords don't match.", "error");
+      else if (this.info.password === this.info.oldPassword)
+        mainStore.openSnackbar(
+          "New password must be different from the old one.",
+          "error"
+        );
       else {
         // get API_BASE_URL from environment variables
         const apiUrl = useRuntimeConfig().public.API_BASE_URL;
