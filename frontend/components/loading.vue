@@ -1,50 +1,30 @@
 <!-- This is a temporary loading component. It will be improved in the future. -->
 <template>
   <!-- Main container for loading -->
-  <div id="main" class="d-flex align-center justify-center w-100">
-    <!-- Loading message with dynamic dots -->
-    <h1 class="text-h4" id="loading">
-      Loading <span id="loading-dots">{{ startLoading }}</span>
-    </h1>
-  </div>
+  <v-container fluid id="main" class="w-100 d-flex align-center justify-center">
+    <span id="loading"></span>
+  </v-container>
+  <p id="credit" class="d-flex align-center justify-center w-100">
+    Icons by &nbsp;
+    <a href="https://lordicon.com/" target="_blank"> Lordicon </a>
+  </p>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      // Variable to hold the loading interval
-      loadingInterval: null,
-    };
-  },
-  computed: {
-    startLoading() {
-      let i = 1;
-      // Update loading dots every second
-      this.loadingInterval = setInterval(() => {
-        const l = document.getElementById("loading-dots");
-        if (i <= 2) {
-          l.innerText += ".";
-          i++;
-        } else {
-          l.innerText = ".";
-          i = 1;
-        }
-      }, 1000);
-    },
-  },
-  unmounted() {
-    // After unmounting the component, clear the loading interval
-    clearInterval(this.loadingInterval);
-  },
-};
-</script>
 
 <style lang="sass" scoped>
 #main
-    height: 100svh
-    #loading
-        display: flex
-        width: 150px
-        text-align: left
+  height: 100vh
+  #loading
+    width: 100px
+    height: 100px
+    background: url("~/assets/images/main-loading-animation.gif") no-repeat center
+    background-size: contain
+#credit
+  position: absolute
+  bottom: 1%
+  a
+    color: #3399cc
+    text-decoration: none
+    position: relative
+    &:hover
+      text-decoration: underline
 </style>
