@@ -11,18 +11,24 @@ export default defineNuxtRouteMiddleware((to, from) => {
   // Access the main store
   const store = useMainStore();
 
+  if ((isPathInAcceptablePaths || store.token) && !store.sessionValid) {
+    // change the state of loading to true
+    store.$patch({ loading: true });
+  }
+
   // Verify session if session is not valid
   if (store.token && store.sessionValid) {
     // if the destination is /app or /account/password or /account/password/update do nothing
     if (isPathInAcceptablePaths) return;
     else {
+      // if nuxt is ready then change the state of loading to false
+      onNuxtReady(() => {
+        store.$patch({ loading: false });
+      });
       return navigateTo("/app");
     }
   } else {
     if (store.token) {
-      // change the state of loading to true
-      store.$patch({ loading: true });
-
       // If a token is available, proceed with verification
       const apiUrl = useRuntimeConfig().public.API_BASE_URL;
 
@@ -85,6 +91,10 @@ export default defineNuxtRouteMiddleware((to, from) => {
       if (isPathInAcceptablePaths) {
         return navigateTo("/login");
       }
+      // if nuxt is ready then change the state of loading to false
+      onNuxtReady(() => {
+        store.$patch({ loading: false });
+      });
     }
   }
 });
