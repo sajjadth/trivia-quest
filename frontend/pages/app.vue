@@ -1,6 +1,6 @@
 <template>
   <!-- Main container -->
-  <div id="container">
+  <div id="container" class="w-100 h-100">
     <!-- Main content area -->
     <div
       id="main"
