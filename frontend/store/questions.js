@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useMainStore } from ".";
+import confetti from "canvas-confetti";
 
 export const useQuestionsStore = defineStore("questions", {
   state: () => ({
@@ -156,6 +157,13 @@ export const useQuestionsStore = defineStore("questions", {
 
       // Remove the last question card after animation is complete
       setTimeout(() => {
+        // show confetti if there is no more questions
+        if (this.data.length === 1)
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
         this.data.pop();
       }, 375);
     },
