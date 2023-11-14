@@ -133,7 +133,7 @@
           @click="questions.next"
           color="info"
         >
-          Next
+          {{ questions.data.length === 1 ? "Done" : "Next" }}
         </v-btn>
       </v-card-actions>
     </v-card>
