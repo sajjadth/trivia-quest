@@ -154,6 +154,9 @@ export default {
 <style lang="sass" scoped>
 .icon-margin
   margin-right: 10px
+.v-container
+  @media (max-width: $small-screen)
+    padding: 8px !important
 .v-card
   width: 500px
   padding: 28px 20px

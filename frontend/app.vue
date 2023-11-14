@@ -5,6 +5,7 @@
     :color="store.snackbar.color"
     v-model="store.snackbar.stat"
     location="top center"
+    rounded="lg"
   >
     {{ store.snackbar.message }}
 

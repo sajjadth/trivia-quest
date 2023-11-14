@@ -113,7 +113,7 @@ export default {
   width: 500px
   @media (max-width: $small-screen)
     width: fit-content
-    margin: 10px
+    margin: 8px
 
 #container
   padding: 0 10px 10px 10px
@@ -125,5 +125,7 @@ export default {
     background-position: center
     .v-card
       padding: 28px 20px
+      @media(max-width: $small-screen)
+        padding: 8px
       border: 1px #333333 solid
 </style>

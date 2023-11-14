@@ -154,14 +154,16 @@ export default {
 <style scoped lang="sass">
 .divider-p-4
     margin-inline: 20px
-
+.v-card
+    @media (max-width: $small-screen)
+      margin-inline: 8px !important
 #reset-password-main-window
     width: 500px
     padding: 28px 20px
     border: 1px #333333 solid
     height: fit-content
     @media (max-width: $small-screen)
-      padding: 5px
+      padding: 8px
       width: 100%
     #password-reset-action
         >*

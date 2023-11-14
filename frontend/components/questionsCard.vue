@@ -50,7 +50,7 @@
     >
       <!-- Card title -->
       <v-card-title>
-        <div id="subject">
+        <div id="subject" class="white-space-normal">
           <!-- Subtitle section within the card -->
           <v-tooltip location="top" text="Category">
             <!-- Tooltip for displaying category information -->
