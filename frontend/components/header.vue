@@ -26,7 +26,7 @@
           </template>
 
           <!-- User menu card -->
-          <v-card>
+          <v-card rounded="lg">
             <v-card-text>
               <div class="mx-auto text-center d-flex flex-column">
                 <!-- User avatar and name -->
@@ -42,13 +42,52 @@
                 <!-- Divider -->
                 <v-divider class="my-3"></v-divider>
                 <!-- go to /account/profile -->
-                <v-btn to="/account/profile" variant="plain">
+                <v-btn to="/account/profile" rounded="lg" variant="plain">
                   Edit Account
                 </v-btn>
-                <!-- Logout button-->
-                <v-btn @click="userStore.logoutHandler" variant="plain">
-                  LogoUt
-                </v-btn>
+                <!-- Logout button -->
+                <v-dialog width="500">
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                      variant="text"
+                      color="error"
+                      v-bind="props"
+                      rounded="lg"
+                      >logout</v-btn
+                    >
+                  </template>
+
+                  <template v-slot:default="{ isActive }">
+                    <v-card id="dialog-card" rounded="xl">
+                      <v-card-text class="d-flex flex-row">
+                        <v-icon class="mdi mdi-exit-run icon-margin" />
+                        <h1 class="text-h5">Confirm Logout</h1>
+                      </v-card-text>
+                      <v-card-text>
+                        Are you sure you want to log out? Logging out will end
+                        your current session and you will need to sign in again
+                        to access your account.
+                      </v-card-text>
+
+                      <!-- Buttons for confirming or canceling logout -->
+                      <v-card-actions
+                        class="d-flex flex-row align-center justify-space-around"
+                      >
+                        <v-btn
+                          text="Close"
+                          @click="isActive.value = false"
+                          rounded="lg"
+                        />
+                        <v-btn
+                          text="Confirm"
+                          color="error"
+                          @click="userStore.logoutHandler"
+                          rounded="lg"
+                        />
+                      </v-card-actions>
+                    </v-card>
+                  </template>
+                </v-dialog>
               </div>
             </v-card-text>
           </v-card>
@@ -84,6 +123,10 @@
 </template>
 
 <style lang="sass">
+#dialog-card
+  padding: 28px 20px
+  .icon-margin
+    margin-right: 10px
 #menu-card-avatar
   > *
     margin: 5px !important
