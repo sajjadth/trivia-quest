@@ -162,10 +162,11 @@ export default {
 
 <style lang="sass" scoped>
 #main
-  position: relative !important
-  z-index: 0
   width: 600px
   height: 600px
+  display: grid !important
+  place-items: center !important
+  height: 100vh
   .v-card
     padding: 28px 20px
     border: 1px #333333 solid
@@ -186,10 +187,6 @@ export default {
     padding: 20px
     height: fit-content
     position: fixed
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
     margin: auto
     transition: all 0.25s ease
     &:nth-child(even)
