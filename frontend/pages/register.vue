@@ -293,11 +293,6 @@
     left: 10px
     margin: auto
     padding: 5px 10px
-    a
-      color: #3399cc
-      text-decoration: none
-    a:hover
-      text-decoration: underline
   #left-side-bg
     width: 100%
     position: relative

@@ -21,10 +21,4 @@
 #credit
   position: absolute
   bottom: 1%
-  a
-    color: #3399cc
-    text-decoration: none
-    position: relative
-    &:hover
-      text-decoration: underline
 </style>
