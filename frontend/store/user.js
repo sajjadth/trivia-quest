@@ -89,9 +89,6 @@ export const useUserStore = defineStore("user", {
               this.startTimer();
             } else {
               this.step = 2;
-              if (this.info.rememberMe)
-                localStorage.setItem("token", data.token);
-              else sessionStorage.setItem("token", data.token);
               setTimeout(() => {
                 reloadNuxtApp({ path: "/app" });
               }, 5000);
@@ -124,17 +121,25 @@ export const useUserStore = defineStore("user", {
 
       // If all checks pass, register user
       if (isValid) {
-        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+        // create verification code
+        const verificationCode = Math.floor(100000 + Math.random() * 900000);
+
         // User registration
         this.loading = true;
-        fetch(`${apiUrl}/auth/register`, {
-          method: "POST",
-          body: JSON.stringify({
-            username: this.info.username,
-            password: this.info.password,
-            email: this.info.email,
-          }),
-        })
+
+        // store info in localStorage
+        localStorage.setItem("username", this.info.username);
+        localStorage.setItem("email", this.info.email);
+        localStorage.setItem("password", this.info.password);
+        localStorage.setItem("verificationCode", verificationCode);
+        localStorage.setItem("verified", false);
+
+        fetch(
+          `https://trivia-quest.sajjadth.workers.dev/?email=${this.info.email}&type=verify&code=${verificationCode}`,
+          {
+            method: "GET",
+          }
+        )
           .then((res) => res.json())
           .then((data) => {
             if (!data.success) {
