@@ -7,7 +7,7 @@
       class="w-100 h-100 d-flex flex-row align-center justify-space-between"
     >
       <!-- Site title linking to home -->
-      <NuxtLink id="title" to="/">
+      <NuxtLink id="title" to="/" class="no-underline">
         <div class="d-flex flex-row align-center justify-center">
           <div id="title-icon"></div>
           <h3 id="title-text">Trivia Quest</h3>
