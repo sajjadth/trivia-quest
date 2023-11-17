@@ -4,7 +4,9 @@ export const useMainStore = defineStore("main", {
   state: () => ({
     // Initialize 'token' with the value from local storage or session storage, or null if neither is available
     token:
-      localStorage.getItem("token") || sessionStorage.getItem("token") || null,
+      localStorage.getItem("loggedIn") ||
+      sessionStorage.getItem("loggedIn") ||
+      null,
     username: null,
     sessionValid: false,
     loading: false,
