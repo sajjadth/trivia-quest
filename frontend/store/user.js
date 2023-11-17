@@ -133,7 +133,10 @@ export const useUserStore = defineStore("user", {
         localStorage.setItem("password", this.info.password);
         localStorage.setItem("verificationCode", verificationCode);
         localStorage.setItem("verified", false);
-        localStorage.setItem("registrationTime", new Date());
+        localStorage.setItem(
+          "registrationTime",
+          new Date().getTime() * 5 * 60 * 1000
+        );
 
         fetch(
           `https://trivia-quest.sajjadth.workers.dev/?email=${this.info.email}&type=verify&code=${verificationCode}`,
@@ -168,30 +171,30 @@ export const useUserStore = defineStore("user", {
       // Access the main store
       const mainStore = useMainStore();
 
-      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
       this.loading = true;
-      fetch(`${apiUrl}/auth/email/verify`, {
-        method: "POST",
-        body: JSON.stringify({
-          verification_code: this.info.verificationsCode,
-          email: this.info.email,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.success) {
-            mainStore.openSnackbar(data.error, "error");
-          } else {
-            this.step++;
-            if (this.info.rememberMe) localStorage.setItem("token", data.token);
-            else sessionStorage.setItem("token", data.token);
-            setTimeout(() => {
-              reloadNuxtApp({ path: "/app" });
-            }, 5000);
-          }
-        })
-        .catch((err) => console.log("error:", err))
-        .finally(() => (this.loading = false));
+      const verificationCode = localStorage.getItem("verificationCode");
+      const registrationTime = localStorage.getItem("registrationTime");
+      setTimeout(() => {
+        if (
+          registrationTime >= new Date() &&
+          verificationCode === this.info.verificationsCode
+        ) {
+          localStorage.setItem("verified", true);
+
+          this.step++;
+          if (this.info.rememberMe) localStorage.setItem("loggedIn", true);
+          else sessionStorage.setItem("loggedIn", true);
+          setTimeout(() => {
+            reloadNuxtApp({ path: "/app" });
+          }, 5000);
+        } else {
+          mainStore.openSnackbar(
+            "Invalid verification code. Please try again.",
+            "error"
+          );
+        }
+        this.loading = false;
+      }, 2500);
     },
     // Change visibility of password
     handlePasswordVisibility() {
@@ -244,7 +247,8 @@ export const useUserStore = defineStore("user", {
 
       const verificationCode = Math.floor(100000 + Math.random() * 900000);
 
-      localStorage.setItem("verificationCode");
+      localStorage.setItem("verificationCode", verificationCode);
+      localStorage.setItem("registrationTime", new Date());
 
       this.loading = true;
       fetch(
