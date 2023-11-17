@@ -29,68 +29,43 @@ export default defineNuxtRouteMiddleware((to, from) => {
     }
   } else {
     if (store.token) {
-      // If a token is available, proceed with verification
-      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
-
       // Access the questions store
       const questionsStore = useQuestionsStore();
+      if (
+        questionsStore.categoryList.length === 1 &&
+        questionsStore.categorysId.length === 1
+      ) {
+        fetch("https://opentdb.com/api_category.php")
+          .then((res) => res.json())
+          .then((data) => {
+            let categorysId: any = [];
+            let categorysName: any = [];
 
-      // Send a POST request to verify the token
-      fetch(`${apiUrl}/auth/verify`, {
-        method: "POST",
-        body: JSON.stringify({ token: store.token }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          // If verification is successful, update session status and username
-          if (data.success && data.valid) {
-            // If there is no category, fetch it from open trivia database
-            if (
-              questionsStore.categoryList.length === 1 &&
-              questionsStore.categorysId.length === 1
-            ) {
-              fetch("https://opentdb.com/api_category.php")
-                .then((res) => res.json())
-                .then((data) => {
-                  let categorysId: any = [];
-                  let categorysName: any = [];
+            // Separate the  name and id for better display
+            data.trivia_categories.forEach((c: any) => {
+              categorysId.push(c.id);
+              categorysName.push(c.name);
+            });
 
-                  // Separate the  name and id for better display
-                  data.trivia_categories.forEach((c: any) => {
-                    categorysId.push(c.id);
-                    categorysName.push(c.name);
-                  });
+            // Store separated data on questions
+            questionsStore.categoryList =
+              questionsStore.categoryList.concat(categorysName);
+            questionsStore.categorysId =
+              questionsStore.categorysId.concat(categorysId);
+          })
+          .catch((err) => console.log("error:", err))
+          .finally(() => store.$patch({ loading: false }));
+      }
+      store.$patch({ sessionValid: true });
+      store.$patch({ username: localStorage.getItem("username") } as any);
 
-                  // Store separated data on questions
-                  questionsStore.categoryList =
-                    questionsStore.categoryList.concat(categorysName);
-                  questionsStore.categorysId =
-                    questionsStore.categorysId.concat(categorysId);
-                })
-                .catch((err) => console.log("error:", err))
-                .finally(() => store.$patch({ loading: false }));
-            }
-            store.$patch({ sessionValid: true });
-            store.$patch({ username: data.username });
-
-            if (isPathInAcceptablePaths) return;
-            navigateTo("/app");
-          } else if (to.name === "app") {
-            // If the route is '/app' and verification fails, clear storage and redirect to '/login'
-            localStorage.clear();
-            sessionStorage.clear();
-            navigateTo("/login");
-          }
-        })
-        .catch((err) => {
-          console.log("error:", err);
-        });
+      if (isPathInAcceptablePaths) return;
+      else return navigateTo("/app");
     } else {
       // If there is no token and the user wants to access routes
       // that require a token, redirect the user to /login
-      if (isPathInAcceptablePaths) {
-        return navigateTo("/login");
-      }
+      if (isPathInAcceptablePaths) return navigateTo("/login");
+
       // if nuxt is ready then change the state of loading to false
       onNuxtReady(() => {
         store.$patch({ loading: false });
