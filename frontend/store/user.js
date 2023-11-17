@@ -66,37 +66,60 @@ export const useUserStore = defineStore("user", {
       const mainStore = useMainStore();
 
       this.loading = true;
-      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
 
-      fetch(`${apiUrl}/auth/login`, {
-        method: "POST",
-        body: JSON.stringify({
-          email: this.info.email,
-          password: this.info.password,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.success) {
-            mainStore.openSnackbar(data.error, "error");
-          } else {
-            mainStore.openSnackbar(
-              data.message,
-              data.need_confirmation ? "warning" : "success"
+      const email = localStorage.getItem("email");
+      const password = localStorage.getItem("password");
+      const userVerfied = JSON.parse(localStorage.getItem("verified"));
+
+      setTimeout(() => {
+        if (this.info.email !== email && this.info.password !== password) {
+          mainStore.openSnackbar("invalid email or password", "error");
+        } else {
+          mainStore.openSnackbar(
+            !userVerfied
+              ? "Please enter the confirmation code and remember to check your spam folder."
+              : "Welcome back! You're now logged in.",
+            !userVerfied ? "warning" : "success"
+          );
+          if (!userVerfied) {
+            // create verification code
+            const verificationCode = Math.floor(
+              100000 + Math.random() * 900000
             );
-            if (data.need_confirmation) {
-              this.step++;
-              this.startTimer();
-            } else {
-              this.step = 2;
-              setTimeout(() => {
-                reloadNuxtApp({ path: "/app" });
-              }, 5000);
-            }
+
+            localStorage.setItem("verificationCode", verificationCode);
+
+            fetch(
+              `https://trivia-quest.sajjadth.workers.dev/?email=${this.info.email}&type=resend&code=${verificationCode}`,
+              {
+                method: "GET",
+              }
+            )
+              .then((res) => res.json())
+              .then((data) => {
+                mainStore.openSnackbar(
+                  "New code sent. Check your inbox!",
+                  "success"
+                );
+                this.startTimer();
+              })
+              .catch((err) => console.log("error:", err))
+              .finally(() => {
+                this.step++;
+                this.startTimer();
+                this.loading = false;
+              });
+          } else {
+            this.loading = false;
+            this.step = 2;
+            if (this.info.rememberMe) localStorage.setItem("loggedIn", true);
+            else sessionStorage.setItem("loggedIn", true);
+            setTimeout(() => {
+              reloadNuxtApp({ path: "/app" });
+            }, 5000);
           }
-        })
-        .catch((err) => console.log("error", err))
-        .finally(() => (this.loading = false));
+        }
+      }, 2500);
     },
     // register user
     handleRegisterUser() {
