@@ -133,6 +133,7 @@ export const useUserStore = defineStore("user", {
         localStorage.setItem("password", this.info.password);
         localStorage.setItem("verificationCode", verificationCode);
         localStorage.setItem("verified", false);
+        localStorage.setItem("registrationTime", new Date());
 
         fetch(
           `https://trivia-quest.sajjadth.workers.dev/?email=${this.info.email}&type=verify&code=${verificationCode}`,
@@ -241,12 +242,17 @@ export const useUserStore = defineStore("user", {
       // Access the main storev
       const mainStore = useMainStore();
 
-      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+      const verificationCode = Math.floor(100000 + Math.random() * 900000);
+
+      localStorage.setItem("verificationCode");
+
       this.loading = true;
-      fetch(`${apiUrl}/auth/email/send`, {
-        method: "POST",
-        body: JSON.stringify({ email: this.info.email }),
-      })
+      fetch(
+        `https://trivia-quest.sajjadth.workers.dev/?email=${this.info.email}&type=resend&code=${verificationCode}`,
+        {
+          method: "GET",
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
           mainStore.openSnackbar("New code sent. Check your inbox!", "success");
