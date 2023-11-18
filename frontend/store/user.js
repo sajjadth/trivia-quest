@@ -356,37 +356,40 @@ export const useUserStore = defineStore("user", {
           "error"
         );
       else {
-        // get api url from .env
-        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
-
         // Change the loading state to true
         this.loading = true;
+        setTimeout(() => {
+          const mainTmpKey = localStorage.getItem("tmpKey");
+          const tmpKey = useRoute().query.tmpkey;
+          const oldPassword = localStorage.getItem("password");
 
-        // Send a request to the server to change the password
-        fetch(`${apiUrl}/auth/password/change`, {
-          method: "POST",
-          body: JSON.stringify({
-            tmp_key: this.tmpkey,
-            new_password: this.info.password,
-          }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            // If the request is not successful, display an error message
-            if (!data.success) mainStore.openSnackbar(data.error, "error");
-            else {
-              // If successful, display a success message
-              // and increment the step
-              // and redirect user to login in 5 seconds
-              mainStore.openSnackbar(data.message, "success");
-              this.step++;
-              setTimeout(() => {
-                navigateTo("/login");
-              }, 5000);
-            }
-          })
-          .catch((err) => console.log("error:", err))
-          .finally(() => (this.loading = false));
+          // If the request is not successful, display an error message
+          if (mainTmpKey !== tmpKey)
+            mainStore.openSnackbar(
+              "Oops! Something went wrong. Please try again.",
+              "error"
+            );
+          else if (oldPassword === this.info.password)
+            mainStore.openSnackbar(
+              "New password must be different from the old one. Please choose a unique password.",
+              "error"
+            );
+          else {
+            // If successful, display a success message
+            // and increment the step
+            // and redirect user to login in 5 seconds
+            localStorage.setItem("password", this.info.password);
+            mainStore.openSnackbar(
+              "Your password has been successfully updated.",
+              "success"
+            );
+            this.step++;
+            setTimeout(() => {
+              navigateTo("/login");
+            }, 5000);
+          }
+          this.loading = false;
+        }, 2500);
       }
     },
     updateEmailOnRegister() {
