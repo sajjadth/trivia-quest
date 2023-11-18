@@ -76,40 +76,52 @@ export const useUserStore = defineStore("user", {
           mainStore.openSnackbar("invalid email or password", "error");
           this.loading = false;
         } else {
-          mainStore.openSnackbar(
-            !userVerfied
-              ? "Please enter the confirmation code and remember to check your spam folder."
-              : "Welcome back! You're now logged in.",
-            !userVerfied ? "warning" : "success"
-          );
           if (!userVerfied) {
             // create verification code
             const verificationCode = Math.floor(
               100000 + Math.random() * 900000
             );
+            const fiveMinuteInMilliseconds = 5 * 60 * 1000;
 
-            localStorage.setItem("verificationCode", verificationCode);
-
-            fetch(
-              `https://trivia-quest.sajjadth.workers.dev/?email=${this.info.email}&type=resend&code=${verificationCode}`,
-              {
-                method: "GET",
-              }
-            )
-              .then((res) => res.json())
-              .then((data) => {
-                mainStore.openSnackbar(
-                  "New code sent. Check your inbox!",
-                  "success"
-                );
-                this.startTimer();
-              })
-              .catch((err) => console.log("error:", err))
-              .finally(() => {
-                this.step++;
-                this.startTimer();
-                this.loading = false;
-              });
+            const registrationTime = localStorage.getItem("registrationTime");
+            if (registrationTime < new Date()) {
+              localStorage.setItem("verificationCode", verificationCode);
+              localStorage.setItem(
+                "registrationTime",
+                new Date().getTime() + fiveMinuteInMilliseconds
+              );
+              fetch(
+                `https://trivia-quest.sajjadth.workers.dev/?email=${this.info.email}&type=resend&code=${verificationCode}`,
+                {
+                  method: "GET",
+                }
+              )
+                .then((res) => res.json())
+                .then((data) => {
+                  mainStore.openSnackbar(
+                    "New code sent. Check your inbox!",
+                    "success"
+                  );
+                  this.startTimer();
+                })
+                .catch((err) => console.log("error:", err))
+                .finally(() => {
+                  this.step++;
+                  this.startTimer();
+                  this.loading = false;
+                });
+            } else {
+              this.timer.timer = Math.floor(
+                (JSON.parse(registrationTime) - new Date().getTime()) / 1000
+              );
+              this.startTimer();
+              mainStore.openSnackbar(
+                "Please enter the confirmation code and remember to check your spam folder.",
+                "warning"
+              );
+              this.loading = false;
+              this.step++;
+            }
           } else {
             this.loading = false;
             this.step = 2;
@@ -152,6 +164,7 @@ export const useUserStore = defineStore("user", {
         this.loading = true;
 
         const place = Math.floor(Math.random() * 6) + 1;
+        const fiveMinuteInMilliseconds = 5 * 60 * 1000;
 
         // store info in localStorage
         localStorage.setItem("username", this.info.username);
@@ -163,7 +176,7 @@ export const useUserStore = defineStore("user", {
         localStorage.setItem("score", 0);
         localStorage.setItem(
           "registrationTime",
-          new Date().getTime() * 5 * 60 * 1000
+          new Date().getTime() + fiveMinuteInMilliseconds
         );
 
         fetch(
@@ -274,6 +287,7 @@ export const useUserStore = defineStore("user", {
       const mainStore = useMainStore();
 
       const verificationCode = Math.floor(100000 + Math.random() * 900000);
+      const fiveMinuteInMilliseconds = 5 * 60 * 1000;
 
       localStorage.setItem("verificationCode", verificationCode);
       localStorage.setItem("registrationTime", new Date());
@@ -501,7 +515,7 @@ export const useUserStore = defineStore("user", {
             );
             setTimeout(() => navigateTo("/app"), 5000);
           }
-          this.loading= false
+          this.loading = false;
         }, 2500);
       }
     },
