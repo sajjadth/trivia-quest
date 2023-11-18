@@ -72,8 +72,9 @@ export const useUserStore = defineStore("user", {
       const userVerfied = JSON.parse(localStorage.getItem("verified"));
 
       setTimeout(() => {
-        if (this.info.email !== email && this.info.password !== password) {
+        if (this.info.email !== email || this.info.password !== password) {
           mainStore.openSnackbar("invalid email or password", "error");
+          this.loading = false;
         } else {
           mainStore.openSnackbar(
             !userVerfied
