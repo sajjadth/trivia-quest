@@ -1,5 +1,6 @@
 # Nuxt dev/build outputs
 frontend/.output
+frontend/build
 frontend/.data
 frontend/.nuxt
 frontend/.nitro
