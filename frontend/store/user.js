@@ -290,6 +290,19 @@ export const useUserStore = defineStore("user", {
     },
     // 'sendResetPasswordLink' function to send a reset password link
     sendResetPasswordLink() {
+      // generate temporary key
+      function generateRandomString(length) {
+        const characters =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
+        let result = "";
+        for (let i = 0; i < length; i++) {
+          result += characters.charAt(
+            Math.floor(Math.random() * characters.length)
+          );
+        }
+        return result;
+      }
+
       // access the main store
       const mainStore = useMainStore();
 
@@ -297,20 +310,19 @@ export const useUserStore = defineStore("user", {
       if (this.rules.email(this.info.email) !== true)
         mainStore.openSnackbar("Please enter valid email!", "error");
       else {
-        // get api url from .env
-        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
-
         // Change the loading state to true
         this.loading = true;
 
+        const tmpKey = generateRandomString(16);
+        localStorage.setItem("tmpKey", tmpKey);
+
         // Send a request to the server to reset the password
-        fetch(`${apiUrl}/auth/password/reset`, {
-          method: "POST",
-          body: JSON.stringify({
-            tmp_key: this.tmpkey,
-            email: this.info.email,
-          }),
-        })
+        fetch(
+          `https://trivia-quest.sajjadth.workers.dev/?email=${this.info.email}&type=reset&tmpKey=${tmpKey}`,
+          {
+            method: "GET",
+          }
+        )
           .then((res) => res.json())
           .then((data) => {
             // If the request is not successful, display an error message
