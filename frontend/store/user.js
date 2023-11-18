@@ -477,38 +477,32 @@ export const useUserStore = defineStore("user", {
           "error"
         );
       else {
-        // get API_BASE_URL from environment variables
-        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
-
         // change the state of loading to true
         this.loading = true;
 
-        // update the old password with new one
-        fetch(`${apiUrl}/auth/password/update`, {
-          method: "POST",
-          headers: {
-            token: mainStore.token,
-          },
-          body: JSON.stringify({
-            new_password: this.info.password,
-            password: this.info.oldPassword,
-          }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            // check if there is any problem with api request show it in snackbar
-            if (!data.success) mainStore.openSnackbar(data.error, "error");
-            else {
-              // if there is no problem then increase the step
-              // and show success message in snackbar
-              // and after 5 minute redirect user to /app
-              this.step++;
-              mainStore.openSnackbar(data.message, "success");
-              setTimeout(() => navigateTo("/app"), 5000);
-            }
-          })
-          .catch((err) => console.log("error:", err))
-          .finally(() => (this.loading = false));
+        const oldPassword = localStorage.getItem("password");
+
+        setTimeout(() => {
+          // check if there is any problem with api request show it in snackbar
+          if (this.info.oldPassword !== oldPassword)
+            mainStore.openSnackbar(
+              "invalid password. Please try again",
+              "error"
+            );
+          else {
+            // if there is no problem then increase the step
+            // and show success message in snackbar
+            // and after 5 minute redirect user to /app
+            this.step++;
+            localStorage.setItem("password", this.info.password);
+            mainStore.openSnackbar(
+              "Your password has been successfully updated.",
+              "success"
+            );
+            setTimeout(() => navigateTo("/app"), 5000);
+          }
+          this.loading= false
+        }, 2500);
       }
     },
   },
