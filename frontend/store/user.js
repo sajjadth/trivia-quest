@@ -151,12 +151,16 @@ export const useUserStore = defineStore("user", {
         // User registration
         this.loading = true;
 
+        const place = Math.floor(Math.random() * 6) + 1;
+
         // store info in localStorage
         localStorage.setItem("username", this.info.username);
         localStorage.setItem("email", this.info.email);
         localStorage.setItem("password", this.info.password);
         localStorage.setItem("verificationCode", verificationCode);
         localStorage.setItem("verified", false);
+        localStorage.setItem("place", place);
+        localStorage.setItem("score", 0);
         localStorage.setItem(
           "registrationTime",
           new Date().getTime() * 5 * 60 * 1000
@@ -444,33 +448,15 @@ export const useUserStore = defineStore("user", {
     },
     // 'getUserProfile' gets user info from database
     getUserProfile() {
-      // Access the main store
-      const mainStore = useMainStore();
-
-      // get api url from .env
-      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
-
-      // Change the loading state to true
       this.loading = true;
 
-      // get usre info from database
-      fetch(`${apiUrl}/auth/profile`, {
-        method: "GET",
-        headers: {
-          token: mainStore.token,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            this.info.username = data.result.username;
-            this.info.email = data.result.email;
-            this.info.place = data.result.place;
-            this.info.score = data.result.score;
-          }
-        })
-        .catch((err) => console.log("error:", err))
-        .finally((this.loading = false));
+      setTimeout(() => {
+        this.info.username = localStorage.getItem("username");
+        this.info.email = localStorage.getItem("email");
+        this.info.place = localStorage.getItem("place");
+        this.info.score = Number(localStorage.getItem("score"));
+        this.loading = false;
+      }, 2500);
     },
     handlePasswordUpdate() {
       // Access the main store
