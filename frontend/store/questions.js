@@ -32,37 +32,51 @@ export const useQuestionsStore = defineStore("questions", {
       // Access the main store
       const mainStore = useMainStore();
 
-      // Get the API base URL from runtime config
-      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+      const amount =
+        this.info.amount >= 20 && this.info.amount <= 1 ? this.info.amount : 10;
+      const type =
+        this.info.type === "True / False"
+          ? "boolean"
+          : this.info.type === "Multiple Choice"
+          ? "multiple"
+          : "";
+      const difficulty =
+        this.info.difficulty === "Any Difficulty"
+          ? ""
+          : this.info.difficulty.toLocaleLowerCase();
 
       // Send a POST request to fetch questions
-      fetch(`${apiUrl}/questions/get`, {
-        method: "POST",
-        headers: {
-          token: mainStore.token, // Include the token from main store in the request headers
-        },
-        body: JSON.stringify({
-          amount: Number(this.info.amount),
-          category:
-            this.categorysId[this.categoryList.indexOf(this.info.category)],
-          difficulty:
-            this.info.difficulty === "Any Difficulty"
-              ? ""
-              : this.info.difficulty.toLocaleLowerCase(), // Convert difficulty to lowercase if not "Any Difficulty"
-          question_type:
-            this.info.type === "Multiple Choice"
-              ? "multiple"
-              : this.info.type === "True / False"
-              ? "boolean"
-              : "", // Set the question type in the request body
-        }),
-      })
+      fetch(
+        `https://opentdb.com/api.php?amount=${amount}&category=${
+          this.categorysId[this.categoryList.indexOf(this.info.category)]
+        }&difficulty=${difficulty}&type=${type}`,
+        {
+          method: "GET",
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
-          if (!data.success) {
+          if (data.response_code !== 0) {
             // Open a snackbar with error message if request is not successful
             mainStore.openSnackbar(data.error, "error");
           } else {
+            data.results.map((res) => {
+              res.correctAnswer = res.correct_answer;
+              if (res.type === "multiple") {
+                var index = Math.floor(Math.random() * 4);
+                res.options = res.incorrect_answers;
+                if (index === 3) res.options.push(res.correct_answer);
+                else {
+                  res.options.push(res.options[index]);
+                  res.options[index] = res.correct_answer;
+                }
+              } else {
+                res.options = ["True", "False"];
+              }
+              delete res.incorrect_answers;
+              delete res.correct_answer;
+            });
+
             // Set the fetched questions in the data property and increment the step to start game
             this.data = data.results;
             this.step++;
