@@ -747,7 +747,9 @@ export const useUserStore = defineStore("user", {
       if (mainStore.isBackendReady) this.resetPasswordHandlerWithBackend();
       else this.resetPasswordHandlerWithoutBackend();
     },
-    updateEmailOnRegister() {
+
+    // update email address when status of backend is 200
+    updateEmailOnRegisterWithBackend() {
       // access the main store
       const mainStore = useMainStore();
 
@@ -789,6 +791,59 @@ export const useUserStore = defineStore("user", {
           .catch((err) => console.log("error:", err))
           .finally(() => (this.loading = false));
       }
+    },
+    // update email address when status of backend is 503
+    updateEmailOnRegisterWithoutBackend() {
+      // access the main store
+      const mainStore = useMainStore();
+
+      // check if email is not valid show an error
+      if (this.rules.email(this.info.email) != true)
+        mainStore.openSnackbar(this.rules.email(this.info.email), "error");
+      else if (this.info.email === this.info.previousEmail)
+        mainStore.openSnackbar(
+          "New email is the same as the current one.",
+          "error"
+        );
+      else {
+        // get api url from .env
+        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+
+        // change the loading state to true
+        this.loading = true;
+
+        // send a request for updating email
+        fetch(`${apiUrl}/auth/email/update`, {
+          method: "POST",
+          body: JSON.stringify({
+            email: this.info.email,
+            password: this.info.password,
+            username: this.info.username,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            // If the request is not successful, display an error message
+            if (!data.success) mainStore.openSnackbar(data.error, "error");
+            else {
+              // If successful, display a success message and increment the step
+              mainStore.openSnackbar(data.message, "success");
+              this.step++;
+              this.timer.timer = 300;
+            }
+          })
+          .catch((err) => console.log("error:", err))
+          .finally(() => (this.loading = false));
+      }
+    },
+
+    // 'updateEmailOnRegister' changes the user eamil
+    updateEmailOnRegister() {
+      // access the main store
+      const mainStore = useMainStore();
+
+      if (mainStore.isBackendReady) this.updateEmailOnRegisterWithBackend();
+      else this.updateEmailOnRegisterWithoutBackend();
     },
     // 'logoutHandler' clears the token and redirect user to index page
     logoutHandler() {
