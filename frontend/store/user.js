@@ -908,7 +908,63 @@ export const useUserStore = defineStore("user", {
       if (mainStore.isBackendReady) this.getUserProfileWithBackend();
       else this.getUserProfileWithoutBackend;
     },
-    handlePasswordUpdate() {
+    // update password when status of backend is 200
+
+    handlePasswordUpdateWithBackend() {
+      // Access the main store
+      const mainStore = useMainStore();
+
+      // check if new password follows the password rules
+      if (this.rules.password(this.info.password) !== true)
+        mainStore.openSnackbar(
+          this.rules.password(this.info.password),
+          "error"
+        );
+      // check if new password and password confirm are match
+      else if (this.info.password != this.info.passwordConfirm)
+        mainStore.openSnackbar("Passwords don't match.", "error");
+      else if (this.info.password === this.info.oldPassword)
+        mainStore.openSnackbar(
+          "New password must be different from the old one.",
+          "error"
+        );
+      else {
+        // get API_BASE_URL from environment variables
+        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+
+        // change the state of loading to true
+        this.loading = true;
+
+        // update the old password with new one
+        fetch(`${apiUrl}/auth/password/update`, {
+          method: "POST",
+          headers: {
+            token: mainStore.token,
+          },
+          body: JSON.stringify({
+            new_password: this.info.password,
+            password: this.info.oldPassword,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            // check if there is any problem with api request show it in snackbar
+            if (!data.success) mainStore.openSnackbar(data.error, "error");
+            else {
+              // if there is no problem then increase the step
+              // and show success message in snackbar
+              // and after 5 minute redirect user to /app
+              this.step++;
+              mainStore.openSnackbar(data.message, "success");
+              setTimeout(() => navigateTo("/app"), 5000);
+            }
+          })
+          .catch((err) => console.log("error:", err))
+          .finally(() => (this.loading = false));
+      }
+    },
+    // update password when status of backend is 503
+    handlePasswordUpdateWithoutBackend() {
       // Access the main store
       const mainStore = useMainStore();
 
@@ -954,6 +1010,13 @@ export const useUserStore = defineStore("user", {
           this.loading = false;
         }, 2500);
       }
+    },
+    handlePasswordUpdate() {
+      // Access the main store
+      const mainStore = useMainStore();
+
+      if (mainStore.isBackendReady) this.handlePasswordUpdateWithBackend();
+      else this.handlePasswordUpdateWithoutBackend();
     },
   },
   getters: {
