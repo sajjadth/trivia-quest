@@ -60,36 +60,46 @@ export const useUserStore = defineStore("user", {
     loading: false,
   }),
   actions: {
-    // login user
-    handleLoginUser() {
+    // handle login when status of backend is 503
+    handleLoginUserWithoutBackend() {
       // Access the main store
       const mainStore = useMainStore();
 
       this.loading = true;
 
+      // get 'email', 'password', 'verified' from localstorage
       const email = localStorage.getItem("email");
       const password = localStorage.getItem("password");
       const userVerfied = JSON.parse(localStorage.getItem("verified"));
 
       setTimeout(() => {
+        // if email and password is not matching show error
         if (this.info.email !== email || this.info.password !== password) {
           mainStore.openSnackbar("invalid email or password", "error");
           this.loading = false;
         } else {
+          // if user is not verifed go for verification
           if (!userVerfied) {
             // create verification code
             const verificationCode = Math.floor(
               100000 + Math.random() * 900000
             );
+
             const fiveMinuteInMilliseconds = 5 * 60 * 1000;
 
+            // get the registration time from localstorage
             const registrationTime = localStorage.getItem("registrationTime");
+
+            // if verification code is expired send new one
             if (registrationTime < new Date()) {
+              // store new verificationCode and registrationTime to localstorage
               localStorage.setItem("verificationCode", verificationCode);
               localStorage.setItem(
                 "registrationTime",
                 new Date().getTime() + fiveMinuteInMilliseconds
               );
+
+              // send new verification code
               fetch(
                 `https://trivia-quest.sajjadth.workers.dev/?email=${this.info.email}&type=resend&code=${verificationCode}`,
                 {
@@ -111,6 +121,7 @@ export const useUserStore = defineStore("user", {
                   this.loading = false;
                 });
             } else {
+              // if verifcationCode is not expired show remaining time
               this.timer.timer = Math.floor(
                 (JSON.parse(registrationTime) - new Date().getTime()) / 1000
               );
@@ -123,6 +134,7 @@ export const useUserStore = defineStore("user", {
               this.step++;
             }
           } else {
+            // if user verfied redirect user to /app
             this.loading = false;
             this.step = 2;
             if (this.info.rememberMe) localStorage.setItem("loggedIn", true);
@@ -133,6 +145,94 @@ export const useUserStore = defineStore("user", {
           }
         }
       }, 2500);
+    },
+    // handle login when status of backend is 200
+    handleLoginUserWithBackend() {
+      // Access the main store
+      const mainStore = useMainStore();
+
+      this.loading = true;
+      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+
+      fetch(`${apiUrl}/auth/login`, {
+        method: "POST",
+        body: JSON.stringify({
+          email: this.info.email,
+          password: this.info.password,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.success) {
+            mainStore.openSnackbar(data.error, "error");
+          } else {
+            mainStore.openSnackbar(
+              data.message,
+              data.need_confirmation ? "warning" : "success"
+            );
+            if (data.need_confirmation) {
+              this.step++;
+              this.startTimer();
+            } else {
+              this.step = 2;
+              if (this.info.rememberMe)
+                localStorage.setItem("token", data.token);
+              else sessionStorage.setItem("token", data.token);
+              setTimeout(() => {
+                reloadNuxtApp({ path: "/app" });
+              }, 5000);
+            }
+          }
+        })
+        .catch((err) => console.log("error", err))
+        .finally(() => (this.loading = false));
+    },
+    handleLoginUser() {
+      // Access the main store
+      const mainStore = useMainStore();
+
+      this.loading = true;
+      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+
+      fetch(`${apiUrl}/auth/login`, {
+        method: "POST",
+        body: JSON.stringify({
+          email: this.info.email,
+          password: this.info.password,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.success) {
+            mainStore.openSnackbar(data.error, "error");
+          } else {
+            mainStore.openSnackbar(
+              data.message,
+              data.need_confirmation ? "warning" : "success"
+            );
+            if (data.need_confirmation) {
+              this.step++;
+              this.startTimer();
+            } else {
+              this.step = 2;
+              if (this.info.rememberMe)
+                localStorage.setItem("token", data.token);
+              else sessionStorage.setItem("token", data.token);
+              setTimeout(() => {
+                reloadNuxtApp({ path: "/app" });
+              }, 5000);
+            }
+          }
+        })
+        .catch((err) => console.log("error", err))
+        .finally(() => (this.loading = false));
+    },
+    // login user
+    handleLoginUser() {
+      // Access the main store
+      const mainStore = useMainStore();
+      if (mainStore.isBackendReady) handleLoginUserWithBackend();
+      else handleLoginUserWithoutBackend();
     },
     // register user
     handleRegisterUser() {
