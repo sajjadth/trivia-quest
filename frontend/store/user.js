@@ -487,8 +487,8 @@ export const useUserStore = defineStore("user", {
       clearInterval(this.timer.timerInterval);
       this.timer.timerInterval = null;
     },
-    // Send new verrification code to email
-    sendEmailAgain() {
+    // send new verification code when status of backend is 503
+    sendEmailAgainWithoutBackend() {
       // Access the main storev
       const mainStore = useMainStore();
 
@@ -512,6 +512,33 @@ export const useUserStore = defineStore("user", {
         })
         .catch((err) => console.log("error:", err))
         .finally(() => (this.loading = false));
+    },
+    // send new verification code when status of backend is 200
+    sendEmailAgainWithBackend() {
+      // Access the main storev
+      const mainStore = useMainStore();
+
+      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+      this.loading = true;
+      fetch(`${apiUrl}/auth/email/send`, {
+        method: "POST",
+        body: JSON.stringify({ email: this.info.email }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          mainStore.openSnackbar("New code sent. Check your inbox!", "success");
+          this.startTimer();
+        })
+        .catch((err) => console.log("error:", err))
+        .finally(() => (this.loading = false));
+    },
+    // Send new verrification code to email
+    sendEmailAgain() {
+      // Access the main storev
+      const mainStore = useMainStore();
+
+      if (mainStore.isBackendReady) this.verifyUserWithBackend;
+      else this.verifyUserWithoutBackend;
     },
     // 'sendResetPasswordLink' function to send a reset password link
     sendResetPasswordLink() {
