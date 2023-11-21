@@ -42,8 +42,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // Access the main store
   const store = useMainStore();
 
-  // Check the status of the backend before proceeding
-  await checkBackendStatus();
+  if (from.name === to.name) {
+    // Check the status of the backend before proceeding
+    await checkBackendStatus();
+  }
 
   if ((isPathInAcceptablePaths || store.token) && !store.sessionValid) {
     // change the state of loading to true
