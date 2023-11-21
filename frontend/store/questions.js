@@ -140,8 +140,73 @@ export const useQuestionsStore = defineStore("questions", {
       if (mainStore.isBackendReady) this.startWithBackend();
       else this.startWithoutBackend();
     },
-    // 'check' action to check user answer with the correct answer by calling api
-    check() {
+    // check the answer when status of backend is 200
+    checkWithBackend() {
+      // Access the main store
+      const mainStore = useMainStore();
+
+      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+
+      // check the user answer if there is a input
+      if (this.user.answer !== null) {
+        //change the state of loading
+        this.loading = true;
+
+        // user answer
+        const userAnswer =
+          this.data[this.data.length - 1].options[this.user.answer];
+
+        // correct answer
+        const correctAnswer = this.data[this.data.length - 1].correct_answer;
+
+        //check the user answer with correct answer by calling api
+        fetch(`${apiUrl}/questions/check`, {
+          method: "POST",
+          headers: { token: mainStore.token },
+          body: JSON.stringify({
+            user_answer: userAnswer,
+            correct_answer: correctAnswer,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.success) {
+              // show snackbar if there is error
+              mainStore.openSnackbar(data.error, "error");
+            } else {
+              // get the users answer element
+              const selectedOption = document.getElementById(
+                `option-1${this.user.answer}`
+              );
+
+              // remove the text-info class from the user answer
+              selectedOption.classList.remove("text-info");
+
+              // if the user answer is same as correct answer add text-success class
+              // and increase the correct answer by one
+              if (data.result) {
+                selectedOption.classList.add("text-success");
+                this.user.correctAnswers++;
+              }
+              // if the user answer is not the same as correct answer add text-error class
+              else selectedOption.classList.add("text-error");
+
+              // change the answerChecked to true to prevent multiple api call
+              this.user.answerChecked = true;
+            }
+          })
+          .catch((err) => console.log("error:", err)) // catch any error
+          .finally((this.loading = false)); // change the state of loading
+      } else {
+        // show error if there is no input and user trying to check
+        mainStore.openSnackbar(
+          "Please select an option before checking.",
+          "error"
+        );
+      }
+    },
+    // check the answer when status of backend is 503
+    checkWithoutBackend() {
       // Access the main store
       const mainStore = useMainStore();
 
@@ -184,6 +249,14 @@ export const useQuestionsStore = defineStore("questions", {
           "error"
         );
       }
+    },
+    // 'check' action to check user answer with the correct answer by calling api
+    check() {
+      // access the main store
+      const mainStore = useMainStore();
+
+      if (mainStore.isBackendReady) this.checkWithBackend();
+      else this.checkWithoutBackend();
     },
     // 'next' action to transition to the next question
     next() {
