@@ -235,7 +235,7 @@ export const useUserStore = defineStore("user", {
       else this.handleLoginUserWithoutBackend();
     },
 
-    // handle login when status of backend is 503
+    // handle register when status of backend is 503
     handleRegisterUserWithoutBackend() {
       const mainStore = useMainStore();
       // Destructure properties from this.info and this.rules for easier access
@@ -309,7 +309,7 @@ export const useUserStore = defineStore("user", {
         );
       }
     },
-    // handle login when status of backend is 200
+    // handle register when status of backend is 200
     handleRegisterUserWithBackend() {
       const mainStore = useMainStore();
       // Destructure properties from this.info and this.rules for easier access
@@ -374,7 +374,9 @@ export const useUserStore = defineStore("user", {
       else this.handleRegisterUserWithoutBackend;
     },
     // verify user with verification code sended to user email
-    verifyUser() {
+
+    // handle verify user when status of backend is 503
+    verifyUserWithoutBackend() {
       // Access the main store
       const mainStore = useMainStore();
 
@@ -402,6 +404,44 @@ export const useUserStore = defineStore("user", {
         }
         this.loading = false;
       }, 2500);
+    },
+    // handle verify user when status of backend is 200
+    verifyUserWithBackend() {
+      // Access the main store
+      const mainStore = useMainStore();
+
+      const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+      this.loading = true;
+      fetch(`${apiUrl}/auth/email/verify`, {
+        method: "POST",
+        body: JSON.stringify({
+          verification_code: this.info.verificationsCode,
+          email: this.info.email,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.success) {
+            mainStore.openSnackbar(data.error, "error");
+          } else {
+            this.step++;
+            if (this.info.rememberMe) localStorage.setItem("token", data.token);
+            else sessionStorage.setItem("token", data.token);
+            setTimeout(() => {
+              reloadNuxtApp({ path: "/app" });
+            }, 5000);
+          }
+        })
+        .catch((err) => console.log("error:", err))
+        .finally(() => (this.loading = false));
+    },
+
+    verifyUser() {
+      // access the main store
+      const mainStore = useMainStore();
+
+      if (mainStore.isBackendReady) this.verifyUserWithBackend;
+      else this.verifyUserWithoutBackend();
     },
     // Change visibility of password
     handlePasswordVisibility() {
