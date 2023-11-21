@@ -371,7 +371,7 @@ export const useUserStore = defineStore("user", {
       const mainStore = useMainStore();
 
       if (mainStore.isBackendReady) this.handleRegisterUserWithBackend();
-      else this.handleRegisterUserWithoutBackend;
+      else this.handleRegisterUserWithoutBackend();
     },
     // verify user with verification code sended to user email
 
@@ -440,7 +440,7 @@ export const useUserStore = defineStore("user", {
       // access the main store
       const mainStore = useMainStore();
 
-      if (mainStore.isBackendReady) this.verifyUserWithBackend;
+      if (mainStore.isBackendReady) this.verifyUserWithBackend();
       else this.verifyUserWithoutBackend();
     },
     // Change visibility of password
@@ -496,7 +496,10 @@ export const useUserStore = defineStore("user", {
       const fiveMinuteInMilliseconds = 5 * 60 * 1000;
 
       localStorage.setItem("verificationCode", verificationCode);
-      localStorage.setItem("registrationTime", new Date());
+      localStorage.setItem(
+        "registrationTime",
+        new Date().getTime() + fiveMinuteInMilliseconds
+      );
 
       this.loading = true;
       fetch(
@@ -537,8 +540,8 @@ export const useUserStore = defineStore("user", {
       // Access the main storev
       const mainStore = useMainStore();
 
-      if (mainStore.isBackendReady) this.verifyUserWithBackend;
-      else this.verifyUserWithoutBackend;
+      if (mainStore.isBackendReady) this.verifyUserWithBackend();
+      else this.verifyUserWithoutBackend();
     },
     // send reset password when status of backend is 503
     sendResetPasswordLinkWithoutBackend() {
@@ -631,7 +634,7 @@ export const useUserStore = defineStore("user", {
       // access the main store
       const mainStore = useMainStore();
 
-      if (mainStore.isBackendReady) this.sendResetPasswordLinkWithBackend;
+      if (mainStore.isBackendReady) this.sendResetPasswordLinkWithBackend();
       else this.sendResetPasswordLinkWithoutBackend();
     },
     // reset password when status of backend is 503
