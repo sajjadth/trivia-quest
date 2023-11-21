@@ -231,11 +231,12 @@ export const useUserStore = defineStore("user", {
     handleLoginUser() {
       // Access the main store
       const mainStore = useMainStore();
-      if (mainStore.isBackendReady) handleLoginUserWithBackend();
-      else handleLoginUserWithoutBackend();
+      if (mainStore.isBackendReady) this.handleLoginUserWithBackend();
+      else this.handleLoginUserWithoutBackend();
     },
-    // register user
-    handleRegisterUser() {
+
+    // handle login when status of backend is 503
+    handleRegisterUserWithoutBackend() {
       const mainStore = useMainStore();
       // Destructure properties from this.info and this.rules for easier access
       const { passwordConfirm } = this.info;
@@ -279,6 +280,7 @@ export const useUserStore = defineStore("user", {
           new Date().getTime() + fiveMinuteInMilliseconds
         );
 
+        // send verification code to user email
         fetch(
           `https://trivia-quest.sajjadth.workers.dev/?email=${this.info.email}&type=verify&code=${verificationCode}`,
           {
@@ -306,6 +308,70 @@ export const useUserStore = defineStore("user", {
           "error"
         );
       }
+    },
+    // handle login when status of backend is 200
+    handleRegisterUserWithBackend() {
+      const mainStore = useMainStore();
+      // Destructure properties from this.info and this.rules for easier access
+      const { passwordConfirm } = this.info;
+      const { email, minCounter, maxCounter, password, username } = this.rules;
+
+      // Array of validation checks for registration form
+      const isValid = [
+        email(this.info.email),
+        minCounter(this.info.username),
+        maxCounter(this.info.username),
+        minCounter(this.info.password),
+        maxCounter(this.info.password),
+        minCounter(passwordConfirm),
+        maxCounter(passwordConfirm),
+        password(this.info.password),
+        username(this.info.username),
+        this.info.password === passwordConfirm,
+      ].every((result) => result === true);
+
+      // If all checks pass, register user
+      if (isValid) {
+        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+        // User registration
+        this.loading = true;
+        fetch(`${apiUrl}/auth/register`, {
+          method: "POST",
+          body: JSON.stringify({
+            username: this.info.username,
+            password: this.info.password,
+            email: this.info.email,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.success) {
+              mainStore.openSnackbar(data.error, "error");
+            } else {
+              this.registered = true;
+              mainStore.openSnackbar(data.message, "success");
+              this.step++;
+              this.startTimer();
+            }
+          })
+          .catch((err) => console.log("err", err))
+          .finally(() => {
+            this.loading = false;
+          });
+      } else {
+        mainStore.openSnackbar(
+          "Oops! It seems you missed a few fields. Please complete all required inputs.",
+          "error"
+        );
+      }
+    },
+    // register user
+    handleRegisterUser() {
+      // access the main store
+      const mainStore = useMainStore();
+
+      if (mainStore.isBackendReady) this.handleRegisterUserWithBackend();
+      else this.handleRegisterUserWithoutBackend;
     },
     // verify user with verification code sended to user email
     verifyUser() {
