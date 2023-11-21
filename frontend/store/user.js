@@ -540,8 +540,8 @@ export const useUserStore = defineStore("user", {
       if (mainStore.isBackendReady) this.verifyUserWithBackend;
       else this.verifyUserWithoutBackend;
     },
-    // 'sendResetPasswordLink' function to send a reset password link
-    sendResetPasswordLink() {
+    // send reset password when status of backend is 503
+    sendResetPasswordLinkWithoutBackend() {
       // generate temporary key
       function generateRandomString(length) {
         const characters =
@@ -588,6 +588,51 @@ export const useUserStore = defineStore("user", {
           .catch((err) => console.log("error:", err))
           .finally(() => (this.loading = false));
       }
+    },
+    // send reset password when status of backend is 200
+    sendResetPasswordLinkWithBackend() {
+      // access the main store
+      const mainStore = useMainStore();
+
+      // Check if the entered email follows the specified rules
+      if (this.rules.email(this.info.email) !== true)
+        mainStore.openSnackbar("Please enter valid email!", "error");
+      else {
+        // get api url from .env
+        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+
+        // Change the loading state to true
+        this.loading = true;
+
+        // Send a request to the server to reset the password
+        fetch(`${apiUrl}/auth/password/reset`, {
+          method: "POST",
+          body: JSON.stringify({
+            tmp_key: this.tmpkey,
+            email: this.info.email,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            // If the request is not successful, display an error message
+            if (!data.success) mainStore.openSnackbar(data.error, "error");
+            else {
+              // If successful, display a success message and increment the step
+              mainStore.openSnackbar(data.message, "success");
+              this.step++;
+            }
+          })
+          .catch((err) => console.log("error:", err))
+          .finally(() => (this.loading = false));
+      }
+    },
+    // 'sendResetPasswordLink' function to send a reset password link
+    sendResetPasswordLink() {
+      // access the main store
+      const mainStore = useMainStore();
+
+      if (mainStore.isBackendReady) this.sendResetPasswordLinkWithBackend;
+      else this.sendResetPasswordLinkWithoutBackend();
     },
 
     // 'resetPasswordHandler' changes the user's password
