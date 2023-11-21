@@ -792,8 +792,15 @@ export const useUserStore = defineStore("user", {
     },
     // 'logoutHandler' clears the token and redirect user to index page
     logoutHandler() {
-      localStorage.removeItem("loggedIn");
-      sessionStorage.removeItem("loggedIn");
+      // access the main store
+      const mainStore = useMainStore();
+      if (mainStore.isBackendReady) {
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+      } else {
+        localStorage.removeItem("loggedIn");
+        sessionStorage.removeItem("loggedIn");
+      }
       reloadNuxtApp({ path: "/" });
     },
     // 'getUserProfile' gets user info from database
