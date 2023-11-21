@@ -634,9 +634,8 @@ export const useUserStore = defineStore("user", {
       if (mainStore.isBackendReady) this.sendResetPasswordLinkWithBackend;
       else this.sendResetPasswordLinkWithoutBackend();
     },
-
-    // 'resetPasswordHandler' changes the user's password
-    resetPasswordHandler() {
+    // reset password when status of backend is 503
+    resetPasswordHandlerWithoutBackend() {
       // access the main store
       const mainStore = useMainStore();
 
@@ -688,6 +687,65 @@ export const useUserStore = defineStore("user", {
           this.loading = false;
         }, 2500);
       }
+    },
+    // reset password when status of backend is 200
+    resetPasswordHandlerWithBackend() {
+      // access the main store
+      const mainStore = useMainStore();
+
+      // Check if the entered password follows the specified rules
+      if (this.rules.password(this.info.password) !== true)
+        mainStore.openSnackbar(
+          this.rules.password(this.info.password),
+          "error"
+        );
+      // Check if the entered password and password confirm are match
+      else if (this.info.password != this.info.passwordConfirm)
+        mainStore.openSnackbar(
+          "Passwords do not match. Please try again.",
+          "error"
+        );
+      else {
+        // get api url from .env
+        const apiUrl = useRuntimeConfig().public.API_BASE_URL;
+
+        // Change the loading state to true
+        this.loading = true;
+
+        // Send a request to the server to change the password
+        fetch(`${apiUrl}/auth/password/change`, {
+          method: "POST",
+          body: JSON.stringify({
+            tmp_key: this.tmpkey,
+            new_password: this.info.password,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            // If the request is not successful, display an error message
+            if (!data.success) mainStore.openSnackbar(data.error, "error");
+            else {
+              // If successful, display a success message
+              // and increment the step
+              // and redirect user to login in 5 seconds
+              mainStore.openSnackbar(data.message, "success");
+              this.step++;
+              setTimeout(() => {
+                navigateTo("/login");
+              }, 5000);
+            }
+          })
+          .catch((err) => console.log("error:", err))
+          .finally(() => (this.loading = false));
+      }
+    },
+    // 'resetPasswordHandler' changes the user's password
+    resetPasswordHandler() {
+      // access the main store
+      const mainStore = useMainStore();
+
+      if (mainStore.isBackendReady) this.resetPasswordHandlerWithBackend();
+      else this.resetPasswordHandlerWithoutBackend();
     },
     updateEmailOnRegister() {
       // access the main store
