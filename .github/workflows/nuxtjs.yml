@@ -95,4 +95,5 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v2
         with:
-          artifact: frontend-dist
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: frontend-dist
