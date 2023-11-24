@@ -78,10 +78,10 @@ jobs:
                 
           $(npm bin)/nuxt generate
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: frontend-dist
-          path: ./dist
+          path: ./frontend/dist
 
   # Deployment job
   deploy:
