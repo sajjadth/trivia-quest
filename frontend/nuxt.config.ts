@@ -1,13 +1,13 @@
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
-import path from "path"
+import path from "path";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
   devtools: { enabled: true },
   nitro: {
     output: {
-      publicDir: path.join(__dirname, 'build')
-    }
+      publicDir: path.join(__dirname, "dist"),
+    },
   },
   modules: [
     (_options, nuxt) => {
