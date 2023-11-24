@@ -91,6 +91,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-dist
+          path: ./dist
+      - name: Check Hard Links and Symlinks
+        run: |
+          find ./dist -type l -exec echo "Symlink found: {}" \;
+          find ./dist -type f -links +1 -exec echo "Hard link found: {}" \;
+      - name: Check Total Size
+        run: |
+          du -sh ./dist
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
