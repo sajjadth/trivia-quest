@@ -21,6 +21,7 @@ export default defineNuxtConfig({
   app: {
     baseURL: "/trivia-quest/",
     head: {
+      link: [{ rel: "icon", href: "/trivia-quest/favicon.ico" }],
       title: "Trivia Quest",
       meta: [
         {
