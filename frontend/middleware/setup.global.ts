@@ -35,9 +35,9 @@ async function checkBackendStatus() {
 export default defineNuxtRouteMiddleware(async (to, from) => {
   // check for acceptable paths
   const isPathInAcceptablePaths =
-    to.path === "/app" ||
-    to.path === "/account/profile" ||
-    to.path === "/account/password/update";
+    to.name === "app" ||
+    to.name === "account-profile" ||
+    to.name === "account-password-update";
 
   // Access the main store
   const store = useMainStore();
