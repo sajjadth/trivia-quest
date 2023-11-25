@@ -19,6 +19,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
   ],
   app: {
+    baseURL: "/trivia-quest/",
     head: {
       title: "Trivia Quest",
       meta: [
