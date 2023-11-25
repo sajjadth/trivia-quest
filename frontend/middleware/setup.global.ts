@@ -15,14 +15,14 @@ async function checkBackendStatus() {
   })
     .then((res) => res.json())
     .then((data) => {
-      // stora status of backend
-      store.$patch({ isBackendReady: data.status === 200 });
+      if (data.status === 200 || data.status === 503)
+        // stora status of backend
+        store.$patch({ isBackendReady: data.ok });
       // if backend is not up and running then use demo version of app
       if (!store.isBackendReady) {
         const tokenInLocalStorage =
-          String(localStorage.getItem("loggedIn")) ||
-          String(sessionStorage.getItem("loggedIn")) ||
-          null;
+          JSON.parse(localStorage.getItem("loggedIn") as any) ||
+          JSON.parse(sessionStorage.getItem("loggedIn") as any);
         store.$patch({ token: tokenInLocalStorage as any });
       }
     })
