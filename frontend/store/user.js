@@ -140,7 +140,7 @@ export const useUserStore = defineStore("user", {
             if (this.info.rememberMe) localStorage.setItem("loggedIn", true);
             else sessionStorage.setItem("loggedIn", true);
             setTimeout(() => {
-              reloadNuxtApp({ path: "/app" });
+              window.location.reload();
             }, 5000);
           }
         }
@@ -179,7 +179,7 @@ export const useUserStore = defineStore("user", {
                 localStorage.setItem("token", data.token);
               else sessionStorage.setItem("token", data.token);
               setTimeout(() => {
-                reloadNuxtApp({ path: "/app" });
+                window.location.reload();
               }, 5000);
             }
           }
@@ -219,7 +219,7 @@ export const useUserStore = defineStore("user", {
                 localStorage.setItem("token", data.token);
               else sessionStorage.setItem("token", data.token);
               setTimeout(() => {
-                reloadNuxtApp({ path: "/app" });
+                window.location.reload();
               }, 5000);
             }
           }
@@ -394,7 +394,7 @@ export const useUserStore = defineStore("user", {
           if (this.info.rememberMe) localStorage.setItem("loggedIn", true);
           else sessionStorage.setItem("loggedIn", true);
           setTimeout(() => {
-            reloadNuxtApp({ path: "/app" });
+            window.location.reload();
           }, 5000);
         } else {
           mainStore.openSnackbar(
@@ -428,7 +428,7 @@ export const useUserStore = defineStore("user", {
             if (this.info.rememberMe) localStorage.setItem("token", data.token);
             else sessionStorage.setItem("token", data.token);
             setTimeout(() => {
-              reloadNuxtApp({ path: "/app" });
+              window.location.reload();
             }, 5000);
           }
         })
@@ -859,7 +859,7 @@ export const useUserStore = defineStore("user", {
         localStorage.removeItem("loggedIn");
         sessionStorage.removeItem("loggedIn");
       }
-      reloadNuxtApp({ path: "/" });
+      window.location.reload();
     },
     // get user info when status of backend is 200
     getUserProfileWithBackend() {
