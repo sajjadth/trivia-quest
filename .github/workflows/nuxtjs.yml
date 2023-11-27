@@ -9,6 +9,9 @@ on:
   push:
     branches: ["main"]
 
+env:
+  BACKEND_STATUS_API_URL: ${{ vars.BACKEND_STATUS_API_URL }}
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
