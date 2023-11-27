@@ -31,6 +31,7 @@ Welcome to Trivia Quest, an engaging full-stack application that brings the thri
 
      ```bash
      # Database Configuration
+     BACKEND_STATUS_API_URL=
      DATABASE_USERNAME=
      DATABASE_PASSWORD=
      DATABASE_HOST=
@@ -81,6 +82,13 @@ Welcome to Trivia Quest, an engaging full-stack application that brings the thri
 ## External API
 
 Trivia Quest uses the [Open Trivia Database](https://opentdb.com/) to fetch trivia questions.
+
+## Backend Status Check
+The application includes functionality to check the status of the backend using the URL specified in the BACKEND_STATUS_API_URL environment variable. Ensure that the Cloudflare worker is set up and returns a status code (e.g., 200 OK) if the backend is operational.
+
+## Demo
+Check out the live demo of Trivia Quest hosted on GitHub Pages: [Trivia Quest Demo](https://sajjadth.github.io/trivia-quest/)
+
 
 ## Contributing
 
