@@ -3,6 +3,7 @@ import { useQuestionsStore } from "~/store/questions";
 
 // check the status of backend
 async function checkBackendStatus() {
+  const backendStatusApiUrl = useRuntimeConfig().public.BACKEND_STATUS_API_URL;
   // Access the main store
   const store = useMainStore();
 
@@ -10,7 +11,7 @@ async function checkBackendStatus() {
   store.loading = true;
 
   // fetch for checking the status of backend
-  await fetch("https://trivia-quest.sajjadth.workers.dev/backend/check", {
+  await fetch(backendStatusApiUrl, {
     method: "get",
   })
     .then((res) => res.json())

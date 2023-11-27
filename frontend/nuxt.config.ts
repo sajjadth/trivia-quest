@@ -36,6 +36,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       API_BASE_URL: process.env.APP_API_BASE_URL,
+      BACKEND_STATUS_API_URL: process.env.BACKEND_STATUS_API_URL,
     },
   },
   css: ["~/assets/styles/main.sass"],
