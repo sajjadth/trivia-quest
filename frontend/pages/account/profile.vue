@@ -2,7 +2,12 @@
   <!-- Main container with centered content -->
   <v-container class="h-100 d-flex flex-column align-center justify-center">
     <!-- Card for displaying user profile information -->
-    <v-card id="profile-card" rounded="xl">
+    <v-card
+      :loading="store.loading"
+      :disabled="store.loading"
+      id="profile-card"
+      rounded="xl"
+    >
       <!-- Card title with avatar icon -->
       <v-card-title class="text-center">
         <v-avatar size="150">
