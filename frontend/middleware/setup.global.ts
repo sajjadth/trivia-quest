@@ -3,7 +3,9 @@ import { useQuestionsStore } from "~/store/questions";
 
 // check the status of backend
 async function checkBackendStatus() {
-  const backendStatusApiUrl = useRuntimeConfig().public.BACKEND_STATUS_API_URL;
+  const backendStatusApiUrl =
+    useRuntimeConfig().public.BACKEND_STATUS_API_URL ||
+    "https://trivia-quest.sajjadth.workers.dev/backend/check";
   // Access the main store
   const store = useMainStore();
 
