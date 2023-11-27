@@ -909,7 +909,7 @@ export const useUserStore = defineStore("user", {
       const mainStore = useMainStore();
 
       if (mainStore.isBackendReady) this.getUserProfileWithBackend();
-      else this.getUserProfileWithoutBackend;
+      else this.getUserProfileWithoutBackend();
     },
     // update password when status of backend is 200
 
