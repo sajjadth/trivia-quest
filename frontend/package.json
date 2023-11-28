@@ -3,8 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "deploy": "gh-pages -d build -b build",
-    "predeploy": "npm run generate",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
